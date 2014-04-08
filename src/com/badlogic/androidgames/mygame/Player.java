@@ -48,17 +48,20 @@ public class Player {
 		}
 		direction = DEFAULT;
 		
+		// Boundary Limiter
+		// TODO should we use min_x, max_x instead of 0 and 9? we can change the single variable more easily if needed
+		
 		if (x < 0) {
-			x = 9;
-		}
-		if (x > 9) {
 			x = 0;
 		}
+		if (x > 9) {
+			x = 9;
+		}
 		if (y < 0) {
-			y = 9;
+			y = 0;
 		}
 		if (y > 9) {
-			y = 0;
+			y = 9;
 		}
 	}
 }
