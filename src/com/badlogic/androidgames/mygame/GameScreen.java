@@ -201,10 +201,10 @@ public class GameScreen extends Screen {
 		
 		Pixmap powerUpPixmap = null;
 		if (powerUp != null) {
-			if (powerUp.type == PowerUp.SPEEDUP) {
+			if (powerUp.type == PowerUpType.SPEEDUP) {
 				powerUpPixmap = Assets.stain1;
 			}
-			if (powerUp.type == PowerUp.STUN) {
+			if (powerUp.type == PowerUpType.STUN) {
 				powerUpPixmap = Assets.stain3;
 			}
 			Log.d("DrawWorldTest","powerup");

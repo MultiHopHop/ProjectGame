@@ -66,7 +66,7 @@ public class World {
 				}
 			}
 		}
-		powerUp = new PowerUp(powerX, powerY, random.nextInt(2));
+		powerUp = new PowerUp(powerX, powerY, PowerUpType.randomPowerup());
 
 	}
 

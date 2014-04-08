@@ -7,7 +7,8 @@ public class Player {
 	public static final int RIGHT = 3;
 	public static final int DEFAULT = 4;
 	
-	public int lastX, lastY, x, y, powerUp, direction;
+	public int lastX, lastY, x, y, direction;
+	PowerUpType powerUp;
 	
 	public Player(int x, int y) {
 		this.x = x;
