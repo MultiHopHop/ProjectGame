@@ -55,8 +55,8 @@ public class GameScreen extends Screen {
 		int len = touchEvents.size();
 		for (int i=0; i<len; i++) {
 			TouchEvent event = touchEvents.get(i);
-			if (event.type == TouchEvent.TOUCH_UP) {
-				if (event.x < 64 && event.y < 64) {
+			if (event.type == TouchEvent.TOUCH_UP) { // pause
+				if (inBounds(event, 0, 310, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
@@ -255,13 +255,13 @@ public class GameScreen extends Screen {
         for (int j=1; j<world.WORLD_HEIGHT; j++) {
     		g.drawLine(0, j*32, 320, j*32, Color.BLACK);
     	}
-        g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);
+        g.drawPixmap(Assets.buttons, 0, 310, 64, 128, 64, 64); //pause
         g.drawLine(0, 320, 480, 320, Color.BLACK);
         
-        g.drawPixmap(Assets.buttons, 192, 416, 64, 64, 64, 64);
-        g.drawPixmap(Assets.buttons, 128, 416, 64, 64, 64, 64);
-        g.drawPixmap(Assets.buttons, 192, 352, 0, 64, 64, 64);
-        g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64);
+        g.drawPixmap(Assets.buttons, 192, 416, 64, 192, 64, 64); //down
+        g.drawPixmap(Assets.buttons, 128, 416, 64, 64, 64, 64); //left
+        g.drawPixmap(Assets.buttons, 192, 352, 0, 192, 64, 64); //up
+        g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64); //right
     }
     
     private void drawPausedUI() {
