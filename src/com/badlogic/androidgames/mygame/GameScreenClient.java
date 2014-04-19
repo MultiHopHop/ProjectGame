@@ -12,7 +12,7 @@ import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.mygame.GameScreenServer.GameState;
 
-public class GameScreen extends Screen {
+public class GameScreenClient extends Screen {
 	enum GameState {
 		Ready, Running, Paused, GameOver
 	}
@@ -24,7 +24,7 @@ public class GameScreen extends Screen {
 	private ClientManagement cm;
 	Parser parser;
 
-	public GameScreen(Game game, ClientManagement cm, int numPlayers) {
+	public GameScreenClient(Game game, ClientManagement cm, int numPlayers) {
 		super(game);
 		this.cm = cm;
 		Log.d("CreateWorld", "num: "+numPlayers);
@@ -79,6 +79,7 @@ public class GameScreen extends Screen {
 //					state = GameState.Paused;
 				}
 			}
+			// for each input, send the corresponding request to server
 			if (event.type == TouchEvent.TOUCH_DOWN) {
 				if (inBounds(event, 256, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
@@ -119,19 +120,19 @@ public class GameScreen extends Screen {
 				return;
 			}
 			
-			// chech if it is 'endGame'
+			// check if it is 'endGame'
 			if (serverRequest.equals("endGame")) {
 				cm.stop();
 				state = GameState.GameOver;
 			}
 			
+			// handle the requests from server, which would be moves of all players
 			String[] requests = serverRequest.split("\n");
 			for (String request : requests) {
 				parser.parse(request);
 			}
 		}
 		
-
 		
 		world.update(deltaTime);
 	}

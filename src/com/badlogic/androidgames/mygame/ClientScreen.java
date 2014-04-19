@@ -185,7 +185,7 @@ public class ClientScreen extends Screen {
 			input = cm.read();
 			if (input.equals("startgame")) {
 				numPlayers = Integer.parseInt(cm.read());
-				game.setScreen(new GameScreen(game, cm, numPlayers));
+				game.setScreen(new GameScreenClient(game, cm, numPlayers));
 			}
 
 		}
