@@ -10,14 +10,23 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import android.util.Log;
+
+/**
+ * This class handles client-side connection
+ * 
+ * @author zianli
+ *
+ */
 public class ClientManagement {
 
 	private static final int SERVERPORT = 6000;
 	private final String SERVER_IP;
 	private InetAddress serverAddr;
 	private Socket socket;
-	private static BufferedReader input;
-	private static PrintWriter writer;
+	private  BufferedReader reader;
+	private  PrintWriter writer;
+	public int clientIndex = 0; // default
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
@@ -25,8 +34,8 @@ public class ClientManagement {
 		try {
 			this.serverAddr = InetAddress.getByName(SERVER_IP);
 			this.socket = new Socket(serverAddr, SERVERPORT);
-			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			writer = new PrintWriter(new BufferedWriter(
+			this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.writer = new PrintWriter(new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream())),
 					true);
 		} catch (UnknownHostException e) {
@@ -39,20 +48,46 @@ public class ClientManagement {
 		
 	}
 	
-	public static String read(){
-		String read = null;
+	public String read(){
+		StringBuilder builder = new StringBuilder();
 		try {
-			read = input.readLine();
+			do {
+				builder.append(reader.readLine());
+			} while (reader.ready());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return read;
+		String output = builder.toString();
+		Log.d("ClientRead", output);
+		return output;
 	}
 	
-	public static void write(String msg){
+	public boolean ready() {
+		boolean output = false;
+		try {
+			output = reader.ready();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return output;
+	}
+	
+	public void write(String msg){
 		writer.println(msg);
+		writer.flush();
 	}
 
+	public void stop() {
+		writer.close();
+		try {
+			reader.close();
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

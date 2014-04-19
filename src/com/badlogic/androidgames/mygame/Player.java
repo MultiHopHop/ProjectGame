@@ -1,6 +1,5 @@
 package com.badlogic.androidgames.mygame;
 
-
 public class Player {
 	public static final int UP = 0;
 	public static final int LEFT = 1;
@@ -14,6 +13,7 @@ public class Player {
 	
 	public int lastX, lastY, x, y, direction;
 	PowerUpType powerUp;
+
 	
 	public Player(int x, int y) {
 		this.x = x;
@@ -52,8 +52,6 @@ public class Player {
 			x += 1;
 		}
 		direction = DEFAULT;
-		
-		// Boundary Limiter
 		
 		if (x < min_x) {
 			x = min_x;

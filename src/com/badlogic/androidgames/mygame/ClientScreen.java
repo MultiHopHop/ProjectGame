@@ -2,6 +2,8 @@ package com.badlogic.androidgames.mygame;
 
 import java.util.List;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
@@ -11,6 +13,7 @@ public class ClientScreen extends Screen {
 	
 	private ClientManagement cm;
 	private static String SERVER_IP = "";
+	private int numPlayers;
 	
 	boolean connected = false;
 
@@ -28,19 +31,18 @@ public class ClientScreen extends Screen {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
 				if (inBounds(event, 0, 416, 120, 48)) { // back button
-					game.setScreen(new MultiPlayerScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
+					game.setScreen(new MultiPlayerScreen(game));
 					return;
 				}
 				
 				if (inBounds(event, 200, 416, 120, 48)) { // connect button
-					new Thread(new ClientThread()).start();
-					//game.setScreen(new ServerScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
+					new Thread(new ClientThread()).start();
 				}
 			}
 			if(!connected){
@@ -165,28 +167,44 @@ public class ClientScreen extends Screen {
 		//@Override
 		public void run() {
 
+//			cm = new ClientManagement(SERVER_IP);
+//			
+//			CommunicationThread commThread = new CommunicationThread();
+//			new Thread(commThread).start();
+
 			cm = new ClientManagement(SERVER_IP);
-			
-			CommunicationThread commThread = new CommunicationThread();
-			new Thread(commThread).start();
+			Log.d("ClientRequest", "request");
+			String input;
+			input = cm.read();
+			Log.d("TestClient", input);
+			if (input.matches("[1-3]")) {
+				cm.clientIndex = Integer.parseInt(input);
+				connected = true;
+			}
+
+			input = cm.read();
+			if (input.equals("startgame")) {
+				numPlayers = Integer.parseInt(cm.read());
+				game.setScreen(new GameScreenClient(game, cm, numPlayers));
+			}
 
 		}
 
 	}
 	
-	class CommunicationThread implements Runnable {
-
-		public void run() {
-
-			while (!Thread.currentThread().isInterrupted()) {
-
-				String read = ClientManagement.read();
-
-				if(read != null) connected = true;
-			}
-		}
-		
-	}
+//	class CommunicationThread implements Runnable {
+//
+//		public void run() {
+//
+//			while (!Thread.currentThread().isInterrupted()) {
+//
+//				String read = ClientManagement.read();
+//
+//				if(read != null) connected = true;
+//			}
+//		}
+//		
+//	}
 
 
 }

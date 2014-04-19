@@ -2,6 +2,8 @@ package com.badlogic.androidgames.mygame;
 
 import java.util.List;
 
+import android.content.Intent;
+
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
@@ -27,8 +29,9 @@ public class MainMenuScreen extends Screen {
 						Assets.click.play(1);
 					}
 				}
-				if (inBounds(event, 64, 220, 192, 42)) { // play button
-					game.setScreen(new GameScreen(game));
+				if (inBounds(event, 64, 220, 192, 42)) {
+					game.setScreen(new MultiPlayerScreen(game));
+//					game.setScreen(new GameScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}

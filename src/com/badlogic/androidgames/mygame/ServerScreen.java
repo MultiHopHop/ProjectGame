@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
@@ -16,6 +18,7 @@ import com.badlogic.androidgames.framework.Screen;
 public class ServerScreen extends Screen {
 	
 	ServerManagement sm;
+	static int numPlayers;
 
 	Thread serverThread = null;
 	
@@ -23,9 +26,13 @@ public class ServerScreen extends Screen {
 
 	public ServerScreen(Game game) {
 		super(game);
+		// default
+		numPlayers = 1;
 
 		this.serverThread = new Thread(new ServerThread());
 		this.serverThread.start();
+		Log.d("CreateServer", "CreateServerThread");
+
 	}
 
 	@Override
@@ -38,18 +45,23 @@ public class ServerScreen extends Screen {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
 				if (inBounds(event, 0, 416, 120, 48)) { // back button
-					game.setScreen(new MultiPlayerScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
+					game.setScreen(new MultiPlayerScreen(game));
+					// test back, close sm
 					return;
 				}
 				
 				if (inBounds(event, 200, 416, 120, 48)) { // play button
-					//game.setScreen(new ServerScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
+					sm.write("startgame");
+					Log.d("ServerWrite", "gamestart");
+					sm.write(String.valueOf(numPlayers));
+					game.setScreen(new GameScreenServer(game, sm));
+
 				}
 			}
 		}
@@ -67,7 +79,11 @@ public class ServerScreen extends Screen {
 		if(ip == null) drawText(g, "123", 0, 80); // get IP failed
 		else drawText(g, ip, 0, 80); // display IP
 		
-		if(connected) g.drawPixmap(Assets.server, 0, 150, 0, 0, 300, 50); // Player connected image
+		if(connected) {
+			// draw number of players connected
+			drawText(g, String.valueOf(numPlayers), 20, 150);
+		}
+//			g.drawPixmap(Assets.server, 0, 150, 0, 0, 300, 50); // Player connected image
 		
 		
 	}
@@ -156,33 +172,14 @@ public class ServerScreen extends Screen {
 			/*CommunicationThread commThread = new CommunicationThread();
 			new Thread(commThread).start();*/
 			
-			ServerManagement.write("Connected to server.");
-    	    
-			
-			
-			/*while (!Thread.currentThread().isInterrupted()) {
-				if(numOfPlayers >2) break;
+			if (accepted) {
+				numPlayers++;
+				sm.singleWrite(String.valueOf(numPlayers - 1), numPlayers - 2);
+				Log.d("ServerAccept", "Send to " + (numPlayers - 2));
+			} else {
+				Log.d("ServerAccept", "Fail to accept");
 
-				try {
-
-					Socket newSocket = serverSocket.accept();
-					Socketlist.add(newSocket);
-
-					writer = new PrintWriter(new BufferedWriter(
-							new OutputStreamWriter(newSocket.getOutputStream())),
-							true);
-		    	    
-					writer.println("Connected to server.");
-					
-					connected.setText(connected.getText().toString() + "\n" + numOfPlayers + " Player connected");
-
-					CommunicationThread commThread = new CommunicationThread(newSocket);
-					new Thread(commThread).start();
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}*/
+			}
 		}
 	}
 

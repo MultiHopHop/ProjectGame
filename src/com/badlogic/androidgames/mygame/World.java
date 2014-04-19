@@ -27,15 +27,30 @@ public class World {
 	float counter = 0;
 	Random random = new Random();
 
-	public World() {
-		player = new Player(0, 0);
-		bot = new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1);
-		players.add(player);
-		players.add(bot);
+	public World(int num) {
+		switch (num) {
+		case 1:
+			players.add(new Player(0, 0));
+			break;
+		case 2:
+			players.add(new Player(0, 0));
+			players.add(new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1));
+			break;
+		case 3:
+			players.add(new Player(0, 0));
+			players.add(new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1));
+			players.add(new Player(0, WORLD_HEIGHT-1));
+			break;
+		case 4:
+			players.add(new Player(0, 0));
+			players.add(new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1));
+			players.add(new Player(0, WORLD_HEIGHT-1));
+			players.add(new Player(WORLD_WIDTH-1, 0));
+			break;		
+		}
+		
 		numPlayer = players.size();
-		Log.d("OnlyWorldTest", "Create World");
-		System.out.println("World Created");
-
+		
 		powerUp = null;
 
 		for (int i = 0; i < WORLD_WIDTH; i++) {
@@ -44,29 +59,35 @@ public class World {
 			}
 		}
 
-		board[player.x][player.y] = 1;
-		board[bot.x][bot.y] = 2;
+		for (int i=0; i<numPlayer; i++) {
+			board[players.get(i).x][players.get(i).y] = i+1;
+		}
+		Log.d("WorldTest", "World Created");
+
 	}
 
 	private void placePowerUp() {
 
-		int powerX = random.nextInt(WORLD_WIDTH);
-		int powerY = random.nextInt(WORLD_HEIGHT);
-
-		while (true) {
-			if (powerX != player.x || powerY != player.y) {
-				break;
-			}
-			powerX += 1;
-			if (powerX >= WORLD_WIDTH) {
-				powerX = 0;
-				powerY += 1;
-				if (powerY >= WORLD_HEIGHT) {
-					powerY = 0;
-				}
-			}
-		}
-		powerUp = new PowerUp(powerX, powerY, PowerUpType.randomPowerup());
+//		int powerX = random.nextInt(WORLD_WIDTH);
+//		int powerY = random.nextInt(WORLD_HEIGHT);
+//		boolean found = false;
+//
+//		while (!found) {
+//			for (Player player: players) {
+//				if (powerX == player.x || powerY == player.y) {
+//					break;
+//				}
+//			}			
+//			powerX += 1;
+//			if (powerX >= WORLD_WIDTH) {
+//				powerX = 0;
+//				powerY += 1;
+//				if (powerY >= WORLD_HEIGHT) {
+//					powerY = 0;
+//				}
+//			}
+//		}
+//		powerUp = new PowerUp(powerX, powerY, random.nextInt(2));
 
 	}
 
@@ -78,14 +99,20 @@ public class World {
 		tickTime += deltaTime;
 		counter += deltaTime;
 
-		if (counter > TICK_POWERUP && powerUp == null) {
-			placePowerUp();
-			if (tick - TICK_DECREMENT > 0) {
-				tick -= TICK_DECREMENT;
-			}
-		}
+//		if (counter > TICK_POWERUP && powerUp == null) {
+//			placePowerUp();
+//			if (tick - TICK_DECREMENT > 0) {
+//				tick -= TICK_DECREMENT;
+//			}
+//		}
 
 		while (tickTime > tick) {
+//			Log.d("checkWolrd", "timer: "+tickTime);
+//			Log.d("checkWorld", "tick: "+tick);
+//			
+//			Log.d("checkWorld", "dir0: "+players.get(0).direction);
+//			Log.d("checkWorld", "dir1: "+players.get(1).direction);
+
 			for (int i=0; i<numPlayer; i++) {
 				players.get(i).advance();
 				board[players.get(i).x][players.get(i).y] = i+1;
@@ -99,6 +126,9 @@ public class World {
 				}
 			}
 			tickTime -= tick;
+//			Log.d("checkWorld", "coord0: "+players.get(1).x+";"+players.get(1).y);
+//			Log.d("checkWorld", "coord1: "+players.get(1).x+";"+players.get(1).y);
+
 			
 //			player.advance();
 //			Log.d("OnlyWorldTest", "After advance");
