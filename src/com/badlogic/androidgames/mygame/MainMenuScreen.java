@@ -30,7 +30,7 @@ public class MainMenuScreen extends Screen {
 					}
 				}
 				if (inBounds(event, 64, 220, 192, 42)) {
-					game.setScreen(new ConnectScreen(game));
+					game.setScreen(new MultiPlayerScreen(game));
 //					game.setScreen(new GameScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);

@@ -6,8 +6,14 @@ public class Player {
 	public static final int DOWN = 2;
 	public static final int RIGHT = 3;
 	public static final int DEFAULT = 4;
+	private int min_x = 0;
+	private int max_x = 9;
+	private int min_y = 0;
+	private int max_y = 9;
 	
-	public int lastX, lastY, x, y, powerUp, direction;
+	public int lastX, lastY, x, y, direction;
+	PowerUpType powerUp;
+
 	
 	public Player(int x, int y) {
 		this.x = x;
@@ -47,17 +53,17 @@ public class Player {
 		}
 		direction = DEFAULT;
 		
-		if (x < 0) {
-			x = 9;
+		if (x < min_x) {
+			x = min_x;
 		}
-		if (x > 9) {
-			x = 0;
+		if (x > max_x) {
+			x = max_x;
 		}
-		if (y < 0) {
-			y = 9;
+		if (y < min_y) {
+			y = min_y;
 		}
-		if (y > 9) {
-			y = 0;
+		if (y > max_y) {
+			y = max_y;
 		}
 	}
 }

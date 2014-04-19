@@ -254,19 +254,19 @@ public class GameScreenServer extends Screen {
 			}
 		}
 
-		Pixmap powerUpPixmap = null;
-		if (powerUp != null) {
-			if (powerUp.type == PowerUp.SPEEDUP) {
-				powerUpPixmap = Assets.stain1;
-			}
-			if (powerUp.type == PowerUp.STUN) {
-				powerUpPixmap = Assets.stain3;
-			}
-			Log.d("DrawWorldTest", "powerup");
-			x = powerUp.x * 32;
-			y = powerUp.y * 32;
-			g.drawPixmap(powerUpPixmap, x, y);
-		}
+//		Pixmap powerUpPixmap = null;
+//		if (powerUp != null) {
+//			if (powerUp.type == PowerUp.SPEEDUP) {
+//				powerUpPixmap = Assets.stain1;
+//			}
+//			if (powerUp.type == PowerUp.STUN) {
+//				powerUpPixmap = Assets.stain3;
+//			}
+//			Log.d("DrawWorldTest", "powerup");
+//			x = powerUp.x * 32;
+//			y = powerUp.y * 32;
+//			g.drawPixmap(powerUpPixmap, x, y);
+//		}
 
 		for (Player player : players) {
 			Pixmap headPixmap = Assets.tail;

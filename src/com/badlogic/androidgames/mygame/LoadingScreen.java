@@ -31,6 +31,10 @@ public class LoadingScreen extends Screen {
 	    Assets.stain1 = g.newPixmap("stain1.png", PixmapFormat.ARGB4444);
 	    Assets.stain2 = g.newPixmap("stain2.png", PixmapFormat.ARGB4444);
 	    Assets.stain3 = g.newPixmap("stain3.png", PixmapFormat.ARGB4444);
+	    Assets.serverclient = g.newPixmap("serverclient.png", PixmapFormat.ARGB4444);
+	    Assets.server = g.newPixmap("server.png", PixmapFormat.ARGB4444);
+	    Assets.client = g.newPixmap("client.png", PixmapFormat.ARGB4444);
+	    Assets.numberpad = g.newPixmap("numberpad.png", PixmapFormat.ARGB4444);
 	    Assets.click = game.getAudio().newSound("click.ogg");
 	    Assets.eat = game.getAudio().newSound("eat.ogg");
 	    Assets.bitten = game.getAudio().newSound("bitten.ogg");
