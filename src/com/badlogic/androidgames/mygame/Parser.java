@@ -34,7 +34,6 @@ public class Parser {
 //			return;
 //		}
 		Log.d("Parser", "Agent: "+agent);
-
 		
 		if (agent.matches("Player[0-3]")) {
 			int position = agent.length() - 1;
@@ -58,6 +57,23 @@ public class Parser {
 			}
 		}
 		
+		if (agent.equals("Server")) {
+			if (command.equals("spawnpowerup")) {
+				String[] xy = argument.split(" ");
+				int x = Integer.parseInt(xy[0]);
+				int y = Integer.parseInt(xy[1]);
+				if (xy[2].equals("speedup")) {
+					world.placePowerUp(x, y, PowerUpType.SPEEDUP);
+				}
+				else if (xy[2].equals("stun")) {
+					world.placePowerUp(x, y, PowerUpType.STUN);
+				}
+				else if (xy[2].equals("bomb")) {
+					world.placePowerUp(x, y, PowerUpType.BOMB);
+				}
+ 			}
+		}
+		
 		// if (command.equals("spawnpowerup") && agent.equals("Server")) {
 		// String[] xy = argument.split(" ");
 		// int x = Integer.parseInt(xy[0]);
@@ -77,7 +93,7 @@ public class Parser {
 	private void lexer(String input) {
 		Pattern patterns = Pattern.compile("((Player[0-3])|Server)|"
 				+ "(move|spawnpowerup)|"
-				+ "(up|down|right|left|([0-9]+ [0-9]+))|" + "(-?[01])");
+				+ "(up|down|right|left|([0-9]+ [0-9]+ (speedup|stun|bomb)))|" + "(-?[01])");
 		Matcher matcher = patterns.matcher(input);
 		while (matcher.find()) {
 			if (matcher.group().matches("(Player[0-3])|Server")) {
@@ -85,7 +101,7 @@ public class Parser {
 			} else if (matcher.group().matches("(move|spawnpowerup)")) {
 				command = matcher.group();
 			} else if (matcher.group().matches(
-					"(up|down|right|left|([0-9]+ [0-9]+))")) {
+					"(up|down|right|left|([0-9]+ [0-9]+ (speedup|stun|bomb)))")) {
 				argument = matcher.group();
 			} else if (matcher.group().matches("-?[01]")) {
 				System.out.println("Flag: " + matcher.group());
