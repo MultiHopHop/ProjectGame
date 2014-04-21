@@ -49,6 +49,7 @@ public class ServerScreen extends Screen {
 						Assets.click.play(1);
 					}
 					game.setScreen(new MultiPlayerScreen(game));
+					sm.stop();
 					// test back, close sm
 					return;
 				}

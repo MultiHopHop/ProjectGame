@@ -27,7 +27,7 @@ public class GameScreenClient extends Screen {
 	public GameScreenClient(Game game, ClientManagement cm, int numPlayers) {
 		super(game);
 		this.cm = cm;
-		Log.d("CreateWorld", "num: "+numPlayers);
+		Log.d("CreateWorld", "num: " + numPlayers);
 		world = new World(numPlayers);
 		timer = 0;
 		parser = new Parser(world);
@@ -55,8 +55,8 @@ public class GameScreenClient extends Screen {
 	 * @param touchEvents
 	 */
 	private void updateReady(List<TouchEvent> touchEvents) {
-//		Log.d("ClientReadgState", "timer: "+timer);
-		
+		// Log.d("ClientReadgState", "timer: "+timer);
+
 		if (cm.ready() && cm.read().equals("ready")) {
 			state = GameState.Running;
 			timer = 0;
@@ -64,8 +64,8 @@ public class GameScreenClient extends Screen {
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
-//		Log.d("gameState", "running");
-		
+		// Log.d("gameState", "running");
+
 		// handle touch input
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
@@ -76,7 +76,7 @@ public class GameScreenClient extends Screen {
 						Assets.click.play(1);
 					}
 					cm.write("pause");
-//					state = GameState.Paused;
+					// state = GameState.Paused;
 				}
 			}
 			// for each input, send the corresponding request to server
@@ -110,30 +110,30 @@ public class GameScreenClient extends Screen {
 
 		// handle request from server
 		if (cm.ready()) {
-			String serverRequest = cm.read();			
+			String serverRequest = cm.read();
 			Log.d("ServerRequest", serverRequest);
-			
+
 			// check if it is 'pause'
 			if (serverRequest.equals("pause")) {
 				cm.write(serverRequest);
 				state = GameState.Paused;
 				return;
 			}
-			
+
 			// check if it is 'endGame'
 			if (serverRequest.equals("endGame")) {
 				cm.stop();
 				state = GameState.GameOver;
 			}
-			
-			// handle the requests from server, which would be moves of all players
+
+			// handle the requests from server, which would be moves of all
+			// players
 			String[] requests = serverRequest.split("\n");
 			for (String request : requests) {
 				parser.parse(request);
 			}
 		}
-		
-		
+
 		world.update(deltaTime);
 	}
 
@@ -143,14 +143,13 @@ public class GameScreenClient extends Screen {
 			if (input.equals("resume")) {
 				state = GameState.Running;
 				return;
-			}
-			else if (input.equals("endGame")) {
+			} else if (input.equals("endGame")) {
 				cm.stop();
 				game.setScreen(new MainMenuScreen(game));
 				return;
 			}
 		}
-		
+
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -159,7 +158,7 @@ public class GameScreenClient extends Screen {
 					if (Settings.soundEnabled)
 						Assets.click.play(1);
 					cm.write("resume");
-//					state = GameState.Running;
+					// state = GameState.Running;
 					return;
 				}
 				if (inBounds(event, 80, 148, 160, 48)) {
@@ -167,7 +166,7 @@ public class GameScreenClient extends Screen {
 						Assets.click.play(1);
 					cm.write("endGame");
 					return;
-				}				
+				}
 			}
 		}
 	}
@@ -209,7 +208,7 @@ public class GameScreenClient extends Screen {
 	private void drawWorld(World world) {
 		Graphics g = game.getGraphics();
 		List<Player> players = world.players;
-		PowerUp powerUp = world.powerUp;
+		List<PowerUp> powerUpList = world.powerUpList;
 		int x, y;
 
 		for (int i = 0; i < world.WORLD_WIDTH; i++) {
@@ -239,34 +238,28 @@ public class GameScreenClient extends Screen {
 			}
 		}
 
-//		Pixmap powerUpPixmap = null;
-//		if (powerUp != null) {
-//			if (powerUp.type == PowerUp.SPEEDUP) {
-//				powerUpPixmap = Assets.stain1;
-//			}
-//			if (powerUp.type == PowerUp.STUN) {
-//				powerUpPixmap = Assets.stain3;
-//			}
-//			Log.d("DrawWorldTest", "powerup");
-//			x = powerUp.x * 32;
-//			y = powerUp.y * 32;
-//			g.drawPixmap(powerUpPixmap, x, y);
-//		}
+		// draw powerup(s)
+		Pixmap powerUpPixmap = null;
+		if (!powerUpList.isEmpty()) {
+			for (PowerUp powerUp : powerUpList) {
+				if (powerUp.type == PowerUpType.BOMB) {
+					powerUpPixmap = Assets.stain1;
+				}
+				if (powerUp.type == PowerUpType.SPEEDUP) {
+					powerUpPixmap = Assets.stain2;
+				}
+				if (powerUp.type == PowerUpType.STUN) {
+					powerUpPixmap = Assets.stain3;
+				}
+				// Log.d("PowerUpTest", "powerup drawn");
+				x = powerUp.x * 32;
+				y = powerUp.y * 32;
+				g.drawPixmap(powerUpPixmap, x, y);
+			}
+		}
 
 		for (Player player : players) {
 			Pixmap headPixmap = Assets.tail;
-			// if (player.direction == Player.UP) {
-			// headPixmap = Assets.headUp;
-			// }
-			// if (player.direction == Player.LEFT) {
-			// headPixmap = Assets.headLeft;
-			// }
-			// if (player.direction == Player.DOWN) {
-			// headPixmap = Assets.headDown;
-			// }
-			// if (player.direction == Player.RIGHT) {
-			// headPixmap = Assets.headRight;
-			// }
 			x = player.x * 32 + 16;
 			y = player.y * 32 + 16;
 			g.drawPixmap(headPixmap, x - headPixmap.getWidth() / 2, y
@@ -283,14 +276,12 @@ public class GameScreenClient extends Screen {
 		Graphics g = game.getGraphics();
 		if (timer < 1) {
 			g.drawPixmap(Assets.numbers, 150, 100, 60, 0, 20, 32);
-		}
-		else if (timer < 2) {
+		} else if (timer < 2) {
 			g.drawPixmap(Assets.numbers, 150, 100, 40, 0, 20, 32);
-		}
-		else if (timer < 3) {
+		} else if (timer < 3) {
 			g.drawPixmap(Assets.numbers, 150, 100, 20, 0, 20, 32);
 		}
-//		g.drawPixmap(Assets.ready, 47, 100);
+		// g.drawPixmap(Assets.ready, 47, 100);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
@@ -356,7 +347,7 @@ public class GameScreenClient extends Screen {
 	public void pause() {
 		if (state == GameState.Running) {
 			cm.write("pause");
-//			state = GameState.Paused;
+			// state = GameState.Paused;
 		}
 		if (world.gameOver) {
 			Settings.addScore(110);
@@ -375,7 +366,6 @@ public class GameScreenClient extends Screen {
 		// TODO Auto-generated method stub
 
 	}
-
 
 	/**
 	 * This method checks if a touchEvent lies in specified region
