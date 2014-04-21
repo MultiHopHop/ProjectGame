@@ -1,5 +1,8 @@
 package com.badlogic.androidgames.mygame;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Player {
 	public static final int UP = 0;
 	public static final int LEFT = 1;
@@ -12,7 +15,7 @@ public class Player {
 	private int max_y = 9;
 	
 	public int lastX, lastY, x, y, direction;
-	PowerUpType powerUp;
+	List<PowerUpType> powerUpList = new LinkedList<PowerUpType>();
 
 	
 	public Player(int x, int y) {

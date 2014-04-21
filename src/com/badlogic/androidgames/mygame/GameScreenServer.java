@@ -356,10 +356,31 @@ public class GameScreenServer extends Screen {
 		g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 
-		g.drawPixmap(Assets.buttons, 192, 416, 64, 64, 64, 64);
-		g.drawPixmap(Assets.buttons, 128, 416, 64, 64, 64, 64);
-		g.drawPixmap(Assets.buttons, 192, 352, 0, 64, 64, 64);
-		g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64);
+		g.drawPixmap(Assets.buttons, 192, 416, 64, 192, 64, 64); //down
+        g.drawPixmap(Assets.buttons, 128, 416, 64, 64, 64, 64); //left
+        g.drawPixmap(Assets.buttons, 192, 352, 0, 192, 64, 64); //up
+        g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64); //right
+        
+      //Update power up
+        if(!world.players.get(0).powerUpList.isEmpty()){
+        	List<PowerUpType> list = world.players.get(0).powerUpList;
+        	Pixmap powerUpPixmap = null;
+        	int x = 0;
+			int y = 352;
+        	for (PowerUpType powerUp : list) {
+ 				if (powerUp == PowerUpType.BOMB) {
+ 					powerUpPixmap = Assets.stain1;
+ 				}
+ 				if (powerUp == PowerUpType.SPEEDUP) {
+ 					powerUpPixmap = Assets.stain2;
+ 				}
+ 				if (powerUp == PowerUpType.STUN) {
+ 					powerUpPixmap = Assets.stain3;
+ 				}
+ 				g.drawPixmap(powerUpPixmap, x, y);
+ 				x += 40;
+ 			}
+        }
 	}
 
 	private void drawPausedUI() {
