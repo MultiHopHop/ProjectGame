@@ -91,7 +91,8 @@ public class GameScreenServer extends Screen {
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
 		powerUpTimer += deltaTime;
 		worldTimer += deltaTime;
-		
+		 
+		// handle touch inputs
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -112,7 +113,6 @@ public class GameScreenServer extends Screen {
 					}
 					world.players.get(0).moveRight();
 					tempString = "Player0 move right";
-//					sm.write("Player0 move right");
 				}
 				if (inBounds(event, 192, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
@@ -120,7 +120,6 @@ public class GameScreenServer extends Screen {
 					}
 					world.players.get(0).moveDown();
 					tempString = "Player0 move down";
-//					sm.write("Player0 move down");
 				}
 				if (inBounds(event, 128, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
@@ -128,7 +127,6 @@ public class GameScreenServer extends Screen {
 					}
 					world.players.get(0).moveLeft();
 					tempString = "Player0 move left";
-//					sm.write("Player0 move left");
 				}
 				if (inBounds(event, 192, 352, 64, 64)) {
 					if (Settings.soundEnabled) {
@@ -136,16 +134,11 @@ public class GameScreenServer extends Screen {
 					}
 					world.players.get(0).moveUp();
 					tempString = "Player0 move up";
-//					sm.write("Player0 move up");
 				}			
 			}
 		}
-//		builder.append(inputMessage);
-//		if (!tempString.equals("")) {
-//			sm.write(tempString + "\n");
-//		}
 
-		// handle request from clients
+		// handle clients' requests
 		if (sm.ready()) {
 			String clientInput = sm.read();
 			Log.d("clientInput", clientInput);
@@ -161,9 +154,6 @@ public class GameScreenServer extends Screen {
 				}
 				
 				parser.parse(request);
-				// Log.d("clientMove", "direction: "
-				// + world.players.get(1).direction);
-//				builder.append(request);
 				sm.write(request);
 			}
 		}
@@ -188,19 +178,12 @@ public class GameScreenServer extends Screen {
 						+ world.powerUp.y + " bomb";
 				break;
 			}
-//			if (message)
-//			builder.append(message);
 			sm.write(message);
 			Log.d("ServerWrite", "message: " + message);
 			powerUpTimer -= randomTime;
 		}
 		
-//		String finalMessage = builder.toString();
-//		Log.d("ServerWrite", finalMessage);
-//		if (!finalMessage.equals("")) {
-//			sm.write(builder.toString());
-//		}
-		
+
 		// update world
 		while (worldTimer > tick) {
 			// broadcast move of player 0

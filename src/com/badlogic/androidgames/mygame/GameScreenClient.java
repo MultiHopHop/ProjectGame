@@ -87,28 +87,24 @@ public class GameScreenClient extends Screen {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + cm.clientIndex + " move right";
-//					cm.write("Player" + cm.clientIndex + " move right");
 				}
 				if (inBounds(event, 192, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + cm.clientIndex + " move right";
-//					cm.write("Player" + cm.clientIndex + " move right");
 				}
 				if (inBounds(event, 128, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + cm.clientIndex + " move left";
-//					cm.write("Player" + cm.clientIndex + " move left");
 				}
 				if (inBounds(event, 192, 352, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + cm.clientIndex + " move up";
-//					cm.write("Player" + cm.clientIndex + " move up");
 				}
 			}
 		}
@@ -117,6 +113,7 @@ public class GameScreenClient extends Screen {
 			Log.d("ClientWrite", "start: "+tempString);
 		}
 
+		
 		// handle request from server
 		if (cm.ready()) {
 			String serverRequest = cm.readLine();
