@@ -27,6 +27,7 @@ public class Assets {
     public static Pixmap server;
     public static Pixmap client;
     public static Pixmap numberpad;
+    public static Pixmap stunned;
     
     public static Sound click;
     public static Sound eat;

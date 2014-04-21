@@ -34,6 +34,7 @@ public class LoadingScreen extends Screen {
 	    Assets.stun = g.newPixmap("stun.png", PixmapFormat.ARGB4444);
 	    Assets.bomb = g.newPixmap("bomb.png", PixmapFormat.ARGB4444);
 	    Assets.speedup = g.newPixmap("speedup.png", PixmapFormat.ARGB4444);
+	    Assets.stunned = g.newPixmap("stunned.png", PixmapFormat.ARGB4444);
 	    Assets.serverclient = g.newPixmap("serverclient.png", PixmapFormat.ARGB4444);
 	    Assets.server = g.newPixmap("server.png", PixmapFormat.ARGB4444);
 	    Assets.client = g.newPixmap("client.png", PixmapFormat.ARGB4444);

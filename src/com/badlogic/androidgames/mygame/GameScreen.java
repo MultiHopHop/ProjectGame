@@ -169,7 +169,7 @@ public class GameScreen extends Screen {
 		List<Player> players = world.players;
 		PowerUp powerUp = world.powerUp;
 		int x, y;
-		int numPlayer = world.numPlayer;
+		int numPlayer = world.numPlayers;
 		
 		for (int i=0; i<world.WORLD_WIDTH; i++) {
 			for (int j=0; j<world.WORLD_HEIGHT; j++) {

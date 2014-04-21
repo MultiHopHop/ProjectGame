@@ -1,5 +1,6 @@
 package com.badlogic.androidgames.mygame;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -36,6 +37,9 @@ public class GameScreenServer extends Screen {
 	private ServerManagement sm;
 	Parser parser;
 	Random random = new Random();
+	
+	int maxNumPowerUps = 5;
+	int gridCount[];
 
 	public GameScreenServer(Game game, ServerManagement sm) {
 		super(game);
@@ -60,8 +64,10 @@ public class GameScreenServer extends Screen {
 			updateRunning(touchEvents, deltaTime);
 		if (state == GameState.Paused)
 			updatePaused(touchEvents);
-		if (state == GameState.GameOver)
+		if (state == GameState.GameOver){
+			gridCount = countGrids();
 			updateGameOver(touchEvents);
+		}
 	}
 
 	/**
@@ -101,59 +107,67 @@ public class GameScreenServer extends Screen {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveRight();
-					//sm.write("Player0 move right");
+					sm.write("Player0 move right\n");
 				}
 				if (inBounds(event, 192, 416, 64, 64)) { //down
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveDown();
-					//sm.write("Player0 move down");
+					sm.write("Player0 move down\n");
 				}
 				if (inBounds(event, 128, 416, 64, 64)) { //left
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveLeft();
-					//sm.write("Player0 move left");
+					sm.write("Player0 move left\n");
 				}
 				if (inBounds(event, 192, 352, 64, 64)) { //up
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveUp();
-					//sm.write("Player0 move up");
+					sm.write("Player0 move up\n");
 				}
 				if (inBounds(event, 0, 352, 40, 40)) { //first power up
 					if(!world.players.get(0).powerUpList.isEmpty()){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	String s = "Player0" + " activate "+list.get(0).toString();
+			        	sm.write(s+"\n");
+			        	parser.parse(s);
 			        	list.remove(0);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(0).toString());
 					}
 				}
 				if (inBounds(event, 40, 352, 40, 40)) { //second power up
-					if(!world.players.get(0).powerUpList.isEmpty()){
+					if(world.players.get(0).powerUpList.size() > 1){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	String s = "Player0" + " activate "+list.get(1).toString();
+			        	sm.write(s+"\n");
+			        	parser.parse(s);
 			        	list.remove(1);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(1).toString());
 					}
 				}
 				if (inBounds(event, 80, 352, 40, 40)) { //third power up
-					if(!world.players.get(0).powerUpList.isEmpty()){
+					if(world.players.get(0).powerUpList.size() > 2){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	String s = "Player0" + " activate "+list.get(2).toString();
+			        	sm.write(s+"\n");
+			        	parser.parse(s);
 			        	list.remove(2);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(2).toString());
 					}
 				}
 				if (inBounds(event, 120, 352, 40, 40)) { //forth power up
-					if(!world.players.get(0).powerUpList.isEmpty()){
+					if(world.players.get(0).powerUpList.size() > 3){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	String s = "Player0" + " activate "+list.get(3).toString();
+			        	sm.write(s+"\n");
+			        	parser.parse(s);
 			        	list.remove(3);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(3).toString());
 					}
 				}
 			}
@@ -176,14 +190,14 @@ public class GameScreenServer extends Screen {
 				parser.parse(request);
 //				Log.d("clientMove", "direction: "
 //						+ world.players.get(1).direction);
-				//sm.write(request);
+				sm.write(request+"\n");
 			}
 		}
 
 		// spawn power up
 		float randomTime = random.nextFloat()
 				* (powerUpIntervalUp - powerUpIntervalLow) + powerUpIntervalLow;
-		if (powerUpTimer > randomTime && world.powerUpList.size() < 10) {
+		if (powerUpTimer > randomTime && world.powerUpList.size() < maxNumPowerUps) {
 			world.placePowerUp();
 			String message = "";
 			switch (world.powerUp.type) {
@@ -197,25 +211,12 @@ public class GameScreenServer extends Screen {
 				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" bomb";
 				break;
 			}
-			//sm.write(message);
+			sm.write(message+"\n");
 			Log.d("CheckPowerUp", "message: "+message);
 			powerUpTimer -= randomTime;
 		}
 
 		world.update(deltaTime);
-		
-		//send board to client
-		int board[][] = world.board;
-		String boardString = "board,";
-		for(int i=0;i<board.length;i++){
-			for(int j=0;j<board[i].length;j++){
-				boardString += board[i][j];
-			}
-			boardString += ",";
-		}
-		sm.write(boardString+"\n");
-		
-		//
 		
 		// end of game
 		if (timer > endTime) {
@@ -428,6 +429,11 @@ public class GameScreenServer extends Screen {
  				x += 40;
  			}
         }
+        
+        //stunned image
+        if(world.players.get(0).stunned){
+        		g.drawPixmap(Assets.stunned, g.getWidth()/2-50,  g.getHeight()/2-200, 0, 0, 100, 100);
+        }
 	}
 
 	private void drawPausedUI() {
@@ -440,6 +446,12 @@ public class GameScreenServer extends Screen {
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 
+		String s = "";
+		for(int num :gridCount){
+			s += num+".";
+		}
+		drawText(g,s.substring(0, s.length()-1),62,50);
+			
 		g.drawPixmap(Assets.gameOver, 62, 100);
 		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
@@ -492,6 +504,19 @@ public class GameScreenServer extends Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private int[] countGrids(){
+		int ans[] = new int[world.numPlayers];
+		for(int i=0;i<world.board.length;i++){
+			for(int j=0;j<world.board.length;j++){
+				if(world.board[i][j] > 0){
+					ans[world.board[i][j]-1] += 1;
+				}
+			}
+		}
+		
+		return ans;
 	}
 
 	/**

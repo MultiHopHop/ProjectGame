@@ -29,29 +29,23 @@ public class Parser {
 	}
 
 	public void parse(String input) {
-		if(input.contains("board")){
-			String[] stringBoard = input.split(",");
-			for(int i=0;i<world.board.length;i++){
-				for(int j=0;j<world.board[i].length;j++){
-					world.board[i][j] = Character.getNumericValue(stringBoard[i+1].charAt(j));
-					
-				}
-			}
-			return;
-		}
 		lexer(input);
+		if(agent== null || command==null) return;
 //		if (flag == -1) {
 //			return;
 //		}
 		Log.d("Parser", "Agent: "+agent);
-		
+
 		if (agent.matches("Player[0-3]")) {
 			int position = agent.length() - 1;
-			Log.d("Parser", "position: "+position);
+			//Log.d("Parser", "position: "+position);
 			char temp = agent.charAt(position);
-			Log.d("Parser", "temp: "+temp);
+			//Log.d("Parser", "temp: "+temp);
 			playerIndex = temp - '0';
-			Log.d("Parser", "index: "+playerIndex);
+			//Log.d("Parser", "index: "+playerIndex);
+			//Log.d("Parser", "input: "+input);
+			//Log.d("Parser", "command: "+command);
+			//Log.d("Parser", "argument: "+argument);
 			if (command.equals("move")) {
 				if (argument.equals("up")) {
 					Log.d("Parser", "player"+playerIndex+" move up");
@@ -65,8 +59,17 @@ public class Parser {
 				}
 
 			}
+			else if (command.equals("activate")) {
+				if (argument.equals("SPEEDUP")) {
+					world.speedup(playerIndex);
+				}else if (argument.equals("STUN")) {
+					world.stun(playerIndex);
+				}else if (argument.equals("BOMB")) {
+					world.bomb(playerIndex);
+				}
+			}
 		}
-		
+
 		if (agent.equals("Server")) {
 			if (command.equals("spawnpowerup")) {
 				String[] xy = argument.split(" ");
@@ -83,7 +86,7 @@ public class Parser {
 				}
  			}
 		}
-		
+
 		// if (command.equals("spawnpowerup") && agent.equals("Server")) {
 		// String[] xy = argument.split(" ");
 		// int x = Integer.parseInt(xy[0]);
@@ -102,16 +105,16 @@ public class Parser {
 
 	private void lexer(String input) {
 		Pattern patterns = Pattern.compile("((Player[0-3])|Server)|"
-				+ "(move|spawnpowerup)|"
-				+ "(up|down|right|left|([0-9]+ [0-9]+ (speedup|stun|bomb)))|" + "(-?[01])");
+				+ "(move|spawnpowerup|activate)|"
+				+ "(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))|" + "(-?[01])");
 		Matcher matcher = patterns.matcher(input);
 		while (matcher.find()) {
 			if (matcher.group().matches("(Player[0-3])|Server")) {
 				agent = matcher.group();
-			} else if (matcher.group().matches("(move|spawnpowerup)")) {
+			} else if (matcher.group().matches("(move|spawnpowerup|activate)")) {
 				command = matcher.group();
 			} else if (matcher.group().matches(
-					"(up|down|right|left|([0-9]+ [0-9]+ (speedup|stun|bomb)))")) {
+					"(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))")) {
 				argument = matcher.group();
 			} else if (matcher.group().matches("-?[01]")) {
 				System.out.println("Flag: " + matcher.group());

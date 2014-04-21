@@ -15,6 +15,8 @@ public class Player {
 	private int max_x = 9;
 	private int min_y = 0;
 	private int max_y = 9;
+	int step = 1;
+	boolean stunned = false;
 	
 	public int lastX, lastY, x, y, direction;
 	List<PowerUpType> powerUpList = new LinkedList<PowerUpType>();
@@ -44,16 +46,24 @@ public class Player {
 	
 	public void advance() {
 		if (direction == UP) {
-			y -= 1;
+			lastY = y;
+			lastX = x;
+			y -= step;
 		}
 		if (direction == LEFT) {
-			x -= 1;
+			lastX = x;
+			lastY = y;
+			x -= step;
 		}
 		if (direction == DOWN) {
-			y += 1;
+			lastY = y;
+			lastX = x;
+			y += step;
 		}
 		if (direction == RIGHT) {
-			x += 1;
+			lastX = x;
+			lastY = y;
+			x += step;
 		}
 		direction = DEFAULT;
 		
@@ -70,4 +80,5 @@ public class Player {
 			y = max_y;
 		}
 	}
+	
 }

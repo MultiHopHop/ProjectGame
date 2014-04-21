@@ -18,7 +18,7 @@ public class World {
 	public PowerUp powerUp;
 	public List<PowerUp> powerUpList;
 	public boolean gameOver = false;
-	public int numPlayer;
+	public int numPlayers;
 	public List<Player> players = new ArrayList<Player>();
 	public int board[][] = new int[WORLD_WIDTH][WORLD_HEIGHT];
 
@@ -28,8 +28,13 @@ public class World {
 	float tick = TICK_INITIAL;
 	float powerupCounter = 0;
 	Random random = new Random();
+	
+	public List<Integer> playerPowerUpTime = new LinkedList<Integer>();
 
 	public World(int num) {
+		for(int i=0;i<num;i++){
+			playerPowerUpTime.add(0);
+		}
 		switch (num) {
 		case 1:
 			players.add(new Player(0, 0));
@@ -51,7 +56,7 @@ public class World {
 			break;		
 		}
 		
-		numPlayer = players.size();
+		numPlayers = players.size();
 		
 //		powerUp = null;
 		powerUpList = new LinkedList<PowerUp>();
@@ -62,7 +67,7 @@ public class World {
 			}
 		}
 
-		for (int i=0; i<numPlayer; i++) {
+		for (int i=0; i<numPlayers; i++) {
 			board[players.get(i).x][players.get(i).y] = i+1;
 		}
 		Log.d("WorldTest", "World Created");
@@ -139,9 +144,36 @@ public class World {
 //			Log.d("checkWorld", "dir0: "+players.get(0).direction);
 //			Log.d("checkWorld", "dir1: "+players.get(1).direction);
 
-			for (int i=0; i<numPlayer; i++) {
+			for (int i=0; i<numPlayers; i++) {
+				
 				players.get(i).advance();
 				board[players.get(i).x][players.get(i).y] = i+1;
+				Log.d("World", "player"+i+" x:"+players.get(i).x+" y:"+players.get(i).y );
+				
+				if(players.get(i).step == 2){
+					Log.d("World", "step: "+players.get(i).step);
+					int x = players.get(i).x;
+					Log.d("World", "x: "+x);
+					int lastX = players.get(i).lastX;
+					Log.d("World", "lastX: "+lastX);
+					int y = players.get(i).y;
+					Log.d("World", "y: "+y);
+					int lastY = players.get(i).lastY;
+					Log.d("World", "lastY: "+lastY);
+					if(y>lastY){
+						board[x][lastY+1] = i+1;
+					}
+					if(y<lastY){
+						board[x][lastY-1] = i+1;
+					}
+					if(x>lastX){
+							board[lastX+1][y] = i+1;
+					}
+					if(x<lastX){
+						board[lastX-1][y] = i+1;
+					}
+										
+				}
 				
 				if (!powerUpList.isEmpty()) {
 					for (PowerUp powerUp: powerUpList) {
@@ -160,9 +192,64 @@ public class World {
 //			Log.d("checkWorld", "coord1: "+players.get(1).x+";"+players.get(1).y);
 
 		}
+		
+		for(int index=0;index<playerPowerUpTime.size();index++){
+			if(playerPowerUpTime.get(index) > 0){
+				playerPowerUpTime.set(index, playerPowerUpTime.get(index)-1);
+				
+			} else if(playerPowerUpTime.get(index) == 0){
+				players.get(index).step = 1;
+				players.get(index).stunned = false;
+			}
+			//Log.d("World", "powerUpTime :"+playerPowerUpTime );
+		}
+		
+		
 	}
 
 	public void updateSquare(int x, int y) {
 		board[x][y] = 1;
+	}
+	
+	public void speedup(final int playerIndex){
+		players.get(playerIndex).step = 2;
+		playerPowerUpTime.set(playerIndex, 300);
+		
+		
+	}
+	public void stun(int playerIndex){
+		for(int i=0;i<players.size();i++){
+			if(i != playerIndex){
+				Log.d("World", "player "+i+" got stunned");
+				players.get(i).step = 0;
+				players.get(i).stunned = true;
+				playerPowerUpTime.set(i, 300);
+			}
+		}
+		
+	}
+	public void bomb(int playerIndex){
+		int x = players.get(playerIndex).x;
+		int y = players.get(playerIndex).y;
+		if(y-1>=0){
+			if(x-1>=0)
+				board[x-1][y-1] = playerIndex+1;
+			board[x][y-1] = playerIndex+1;
+			if(x+1<10)
+				board[x+1][y-1] = playerIndex+1;
+		}
+		if(x-1>=0)
+			board[x-1][y] = playerIndex+1;
+		board[x][y] = playerIndex+1;
+		if(x+1<10)
+			board[x+1][y] = playerIndex+1;
+		if(y+1<10){
+			if(x-1>=0)
+				board[x-1][y+1] = playerIndex+1;
+			board[x][y+1] = playerIndex+1;
+			if(x+1<10)
+				board[x+1][y+1] = playerIndex+1;
+		}
+			
 	}
 }

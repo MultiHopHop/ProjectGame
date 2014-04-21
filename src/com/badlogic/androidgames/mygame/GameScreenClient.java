@@ -24,6 +24,7 @@ public class GameScreenClient extends Screen {
 	private ClientManagement cm;
 	Parser parser;
 	private int playerNum;
+	int gridCount[];
 
 	public GameScreenClient(Game game, ClientManagement cm, int numPlayers) {
 		super(game);
@@ -37,7 +38,9 @@ public class GameScreenClient extends Screen {
 
 	@Override
 	public void update(float deltaTime) {
-		timer += deltaTime;
+		if (state != GameState.Paused) {
+			timer += deltaTime;
+		}
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 		game.getInput().getKeyEvents();
 
@@ -47,8 +50,10 @@ public class GameScreenClient extends Screen {
 			updateRunning(touchEvents, deltaTime);
 		if (state == GameState.Paused)
 			updatePaused(touchEvents);
-		if (state == GameState.GameOver)
+		if (state == GameState.GameOver){
+			gridCount = countGrids();
 			updateGameOver(touchEvents);
+		}
 	}
 
 	/**
@@ -111,32 +116,32 @@ public class GameScreenClient extends Screen {
 					if(!world.players.get(playerNum).powerUpList.isEmpty()){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	cm.write("Player" + playerNum + " activate "+list.get(0).toString());
 			        	list.remove(0);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(0).toString());
 					}
 				}
 				if (inBounds(event, 40, 352, 40, 40)) { //second power up
-					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+					if(world.players.get(playerNum).powerUpList.size() > 1){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	cm.write("Player" + playerNum + " activate "+list.get(1).toString());
 			        	list.remove(1);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(1).toString());
 					}
 				}
 				if (inBounds(event, 80, 352, 40, 40)) { //third power up
-					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+					if(world.players.get(playerNum).powerUpList.size() > 2){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	cm.write("Player" + playerNum + " activate "+list.get(2).toString());
 			        	list.remove(2);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(2).toString());
 					}
 				}
 				if (inBounds(event, 120, 352, 40, 40)) { //forth power up
-					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+					if(world.players.get(playerNum).powerUpList.size() > 3){
 						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	cm.write("Player" + playerNum + " activate "+list.get(3).toString());
 			        	list.remove(3);
-			        	//cm.write("Player" + cm.clientIndex + " "+list.get(3).toString());
 					}
 				}
 			}
@@ -149,7 +154,6 @@ public class GameScreenClient extends Screen {
 
 			// check if it is 'pause'
 			if (serverRequest.equals("pause")) {
-				cm.write(serverRequest);
 				state = GameState.Paused;
 				return;
 			}
@@ -162,11 +166,26 @@ public class GameScreenClient extends Screen {
 
 			// handle the requests from server, which would be moves of all
 			// players
-			parser.parse(serverRequest);
-			/*String[] requests = serverRequest.split("\n");
+			String[] requests = serverRequest.split("\n");
 			for (String request : requests) {
-				parser.parse(request);
-			}*/
+				if(request.substring(6).contains("Player")){
+					String s1 = request.substring(6);
+					int indexP = s1.indexOf("P");
+					String s2 = request.substring(indexP+6);
+					parser.parse(s2);
+					s1 = request.substring(0, indexP+6);
+					parser.parse(s1);
+				} else if(request.substring(6).contains("Server")){
+					String s1 = request.substring(6);
+					int indexP = s1.indexOf("S");
+					String s2 = request.substring(indexP+6);
+					parser.parse(s2);
+					s1 = request.substring(0, indexP+6);
+					parser.parse(s1);
+				} else{
+					parser.parse(request);
+				}
+			}
 		}
 
 		world.update(deltaTime);
@@ -360,6 +379,11 @@ public class GameScreenClient extends Screen {
  			}
         }
         
+        //stunned image
+        if(world.players.get(playerNum).stunned){
+    		g.drawPixmap(Assets.stunned, g.getWidth()/2-50,  g.getHeight()/2-200, 0, 0, 100, 100);
+        }
+        
 	}
 
 	private void drawPausedUI() {
@@ -371,6 +395,12 @@ public class GameScreenClient extends Screen {
 
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
+		
+		String s = "";
+		for(int num :gridCount){
+			s += num+".";
+		}
+		drawText(g,s.substring(0, s.length()-1),62,50);
 
 		g.drawPixmap(Assets.gameOver, 62, 100);
 		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);
@@ -406,7 +436,7 @@ public class GameScreenClient extends Screen {
 	public void pause() {
 		if (state == GameState.Running) {
 			cm.write("pause");
-			// state = GameState.Paused;
+			state = GameState.Paused;
 		}
 		if (world.gameOver) {
 			Settings.addScore(110);
@@ -424,6 +454,19 @@ public class GameScreenClient extends Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private int[] countGrids(){
+		int ans[] = new int[world.numPlayers];
+		for(int i=0;i<world.board.length;i++){
+			for(int j=0;j<world.board.length;j++){
+				if(world.board[i][j] > 0){
+					ans[world.board[i][j]-1] += 1;
+				}
+			}
+		}
+		
+		return ans;
 	}
 
 	/**
