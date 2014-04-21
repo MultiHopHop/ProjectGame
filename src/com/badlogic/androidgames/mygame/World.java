@@ -146,7 +146,7 @@ public class World {
 				if (!powerUpList.isEmpty()) {
 					for (PowerUp powerUp: powerUpList) {
 						if (players.get(i).x == powerUp.x && players.get(i).y == powerUp.y) { 
-							players.get(i).powerUp = powerUp.type;
+							player.storePowerUps(powerUp.type);
 							powerUpList.remove(powerUp);
 							break;
 						}

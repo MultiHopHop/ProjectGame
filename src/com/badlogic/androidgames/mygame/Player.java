@@ -1,5 +1,8 @@
 package com.badlogic.androidgames.mygame;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player {
 	public static final int UP = 0;
 	public static final int LEFT = 1;
@@ -10,16 +13,28 @@ public class Player {
 	private int max_x = 9;
 	private int min_y = 0;
 	private int max_y = 9;
+	private List<PowerUpType> powerUpList;
 	
 	public int lastX, lastY, x, y, direction;
-	PowerUpType powerUp;
 
 	
 	public Player(int x, int y) {
 		this.x = x;
 		this.y = y;
-//		this.powerUp = powerUp;		
+		powerUpList = new ArrayList<PowerUpType>();
 		this.direction = DEFAULT;
+	}
+	
+	public void storePowerUps(PowerUpType type)
+	{
+		powerUpList.add(type);
+	}
+	
+	// TODO Scott, where do we put this?
+	
+	public List<PowerUpType> getPowerUps()
+	{
+		return powerUpList;
 	}
 	
 	public void moveUp() {
