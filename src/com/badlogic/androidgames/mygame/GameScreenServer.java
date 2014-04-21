@@ -32,7 +32,7 @@ public class GameScreenServer extends Screen {
 	private static float powerUpTimer;
 	private final int powerUpIntervalLow = 2;
 	private final int powerUpIntervalUp = 4;
-	private final int endTime = 30;
+	private final int endTime = 60; //total game time
 	private ServerManagement sm;
 	Parser parser;
 	Random random = new Random();
@@ -96,33 +96,65 @@ public class GameScreenServer extends Screen {
 				}
 			}
 			if (event.type == TouchEvent.TOUCH_DOWN) {
-				if (inBounds(event, 256, 416, 64, 64)) {
+				if (inBounds(event, 256, 416, 64, 64)) { //right
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveRight();
-					sm.write("Player0 move right");
+					//sm.write("Player0 move right");
 				}
-				if (inBounds(event, 192, 416, 64, 64)) {
+				if (inBounds(event, 192, 416, 64, 64)) { //down
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveDown();
-					sm.write("Player0 move down");
+					//sm.write("Player0 move down");
 				}
-				if (inBounds(event, 128, 416, 64, 64)) {
+				if (inBounds(event, 128, 416, 64, 64)) { //left
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveLeft();
-					sm.write("Player0 move left");
+					//sm.write("Player0 move left");
 				}
-				if (inBounds(event, 192, 352, 64, 64)) {
+				if (inBounds(event, 192, 352, 64, 64)) { //up
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveUp();
-					sm.write("Player0 move up");
+					//sm.write("Player0 move up");
+				}
+				if (inBounds(event, 0, 352, 40, 40)) { //first power up
+					if(!world.players.get(0).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	list.remove(0);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(0).toString());
+					}
+				}
+				if (inBounds(event, 40, 352, 40, 40)) { //second power up
+					if(!world.players.get(0).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	list.remove(1);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(1).toString());
+					}
+				}
+				if (inBounds(event, 80, 352, 40, 40)) { //third power up
+					if(!world.players.get(0).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	list.remove(2);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(2).toString());
+					}
+				}
+				if (inBounds(event, 120, 352, 40, 40)) { //forth power up
+					if(!world.players.get(0).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(0).powerUpList;
+			        	list.remove(3);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(3).toString());
+					}
 				}
 			}
 		}
@@ -144,14 +176,14 @@ public class GameScreenServer extends Screen {
 				parser.parse(request);
 //				Log.d("clientMove", "direction: "
 //						+ world.players.get(1).direction);
-				sm.write(request);
+				//sm.write(request);
 			}
 		}
 
 		// spawn power up
 		float randomTime = random.nextFloat()
 				* (powerUpIntervalUp - powerUpIntervalLow) + powerUpIntervalLow;
-		if (powerUpTimer > randomTime) {
+		if (powerUpTimer > randomTime && world.powerUpList.size() < 10) {
 			world.placePowerUp();
 			String message = "";
 			switch (world.powerUp.type) {
@@ -165,13 +197,26 @@ public class GameScreenServer extends Screen {
 				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" bomb";
 				break;
 			}
-			sm.write(message);
+			//sm.write(message);
 			Log.d("CheckPowerUp", "message: "+message);
 			powerUpTimer -= randomTime;
 		}
 
 		world.update(deltaTime);
-
+		
+		//send board to client
+		int board[][] = world.board;
+		String boardString = "board,";
+		for(int i=0;i<board.length;i++){
+			for(int j=0;j<board[i].length;j++){
+				boardString += board[i][j];
+			}
+			boardString += ",";
+		}
+		sm.write(boardString+"\n");
+		
+		//
+		
 		// end of game
 		if (timer > endTime) {
 			if (Settings.soundEnabled) {
@@ -251,8 +296,10 @@ public class GameScreenServer extends Screen {
 			drawPausedUI();
 		if (state == GameState.GameOver)
 			drawGameOverUI();
-
-		drawText(g, score, 64, g.getHeight() - 42);
+		
+		// timer
+		if(timer<61) drawText(g, ((Integer) Math.round(timer)).toString(), 64, g.getHeight() - 42);
+		else drawText(g, "60", 64, g.getHeight() - 42);
 	}
 
 	private void drawWorld(World world) {
@@ -288,13 +335,13 @@ public class GameScreenServer extends Screen {
 		if (!powerUpList.isEmpty()) {
 			for (PowerUp powerUp : powerUpList) {
 				if (powerUp.type == PowerUpType.BOMB) {
-					powerUpPixmap = Assets.stain1;
+					powerUpPixmap = Assets.bomb;
 				}
 				if (powerUp.type == PowerUpType.SPEEDUP) {
-					powerUpPixmap = Assets.stain2;
+					powerUpPixmap = Assets.speedup;
 				}
 				if (powerUp.type == PowerUpType.STUN) {
-					powerUpPixmap = Assets.stain3;
+					powerUpPixmap = Assets.stun;
 				}
 				// Log.d("PowerUpTest", "powerup drawn");
 				x = powerUp.x * 32;
@@ -369,13 +416,13 @@ public class GameScreenServer extends Screen {
 			int y = 352;
         	for (PowerUpType powerUp : list) {
  				if (powerUp == PowerUpType.BOMB) {
- 					powerUpPixmap = Assets.stain1;
+ 					powerUpPixmap = Assets.bomb;
  				}
  				if (powerUp == PowerUpType.SPEEDUP) {
- 					powerUpPixmap = Assets.stain2;
+ 					powerUpPixmap = Assets.speedup;
  				}
  				if (powerUp == PowerUpType.STUN) {
- 					powerUpPixmap = Assets.stain3;
+ 					powerUpPixmap = Assets.stun;
  				}
  				g.drawPixmap(powerUpPixmap, x, y);
  				x += 40;

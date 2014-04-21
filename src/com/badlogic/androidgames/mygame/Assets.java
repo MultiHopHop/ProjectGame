@@ -20,9 +20,9 @@ public class Assets {
     public static Pixmap headDown;
     public static Pixmap headRight;
     public static Pixmap tail;
-    public static Pixmap stain1;
-    public static Pixmap stain2;
-    public static Pixmap stain3;   
+    public static Pixmap stun;
+    public static Pixmap bomb;
+    public static Pixmap speedup;   
     public static Pixmap serverclient;
     public static Pixmap server;
     public static Pixmap client;

@@ -29,6 +29,16 @@ public class Parser {
 	}
 
 	public void parse(String input) {
+		if(input.contains("board")){
+			String[] stringBoard = input.split(",");
+			for(int i=0;i<world.board.length;i++){
+				for(int j=0;j<world.board[i].length;j++){
+					world.board[i][j] = Character.getNumericValue(stringBoard[i+1].charAt(j));
+					
+				}
+			}
+			return;
+		}
 		lexer(input);
 //		if (flag == -1) {
 //			return;

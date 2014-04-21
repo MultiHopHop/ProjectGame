@@ -83,29 +83,61 @@ public class GameScreenClient extends Screen {
 			}
 			// for each input, send the corresponding request to server
 			if (event.type == TouchEvent.TOUCH_DOWN) {
-				if (inBounds(event, 256, 416, 64, 64)) {
+				if (inBounds(event, 256, 416, 64, 64)) { //right
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					cm.write("Player" + cm.clientIndex + " move right");
 				}
-				if (inBounds(event, 192, 416, 64, 64)) {
+				if (inBounds(event, 192, 416, 64, 64)) { //down
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					cm.write("Player" + cm.clientIndex + " move down");
 				}
-				if (inBounds(event, 128, 416, 64, 64)) {
+				if (inBounds(event, 128, 416, 64, 64)) { //left
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					cm.write("Player" + cm.clientIndex + " move left");
 				}
-				if (inBounds(event, 192, 352, 64, 64)) {
+				if (inBounds(event, 192, 352, 64, 64)) { //up
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					cm.write("Player" + cm.clientIndex + " move up");
+				}
+				if (inBounds(event, 0, 352, 40, 40)) { //first power up
+					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	list.remove(0);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(0).toString());
+					}
+				}
+				if (inBounds(event, 40, 352, 40, 40)) { //second power up
+					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	list.remove(1);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(1).toString());
+					}
+				}
+				if (inBounds(event, 80, 352, 40, 40)) { //third power up
+					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	list.remove(2);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(2).toString());
+					}
+				}
+				if (inBounds(event, 120, 352, 40, 40)) { //forth power up
+					if(!world.players.get(playerNum).powerUpList.isEmpty()){
+						if (Settings.soundEnabled) Assets.click.play(1);
+			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			        	list.remove(3);
+			        	//cm.write("Player" + cm.clientIndex + " "+list.get(3).toString());
+					}
 				}
 			}
 		}
@@ -130,10 +162,11 @@ public class GameScreenClient extends Screen {
 
 			// handle the requests from server, which would be moves of all
 			// players
-			String[] requests = serverRequest.split("\n");
+			parser.parse(serverRequest);
+			/*String[] requests = serverRequest.split("\n");
 			for (String request : requests) {
 				parser.parse(request);
-			}
+			}*/
 		}
 
 		world.update(deltaTime);
@@ -204,7 +237,9 @@ public class GameScreenClient extends Screen {
 		if (state == GameState.GameOver)
 			drawGameOverUI();
 
-		drawText(g, score, 64, g.getHeight() - 42);
+		// timer
+		if(timer<61) drawText(g, ((Integer) Math.round(timer)).toString(), 64, g.getHeight() - 42);
+		else drawText(g, "60", 64, g.getHeight() - 42);
 	}
 
 	private void drawWorld(World world) {
@@ -245,13 +280,13 @@ public class GameScreenClient extends Screen {
 		if (!powerUpList.isEmpty()) {
 			for (PowerUp powerUp : powerUpList) {
 				if (powerUp.type == PowerUpType.BOMB) {
-					powerUpPixmap = Assets.stain1;
+					powerUpPixmap = Assets.bomb;
 				}
 				if (powerUp.type == PowerUpType.SPEEDUP) {
-					powerUpPixmap = Assets.stain2;
+					powerUpPixmap = Assets.speedup;
 				}
 				if (powerUp.type == PowerUpType.STUN) {
-					powerUpPixmap = Assets.stain3;
+					powerUpPixmap = Assets.stun;
 				}
 				// Log.d("PowerUpTest", "powerup drawn");
 				x = powerUp.x * 32;
@@ -312,13 +347,13 @@ public class GameScreenClient extends Screen {
 			int y = 352;
         	for (PowerUpType powerUp : list) {
  				if (powerUp == PowerUpType.BOMB) {
- 					powerUpPixmap = Assets.stain1;
+ 					powerUpPixmap = Assets.bomb;
  				}
  				if (powerUp == PowerUpType.SPEEDUP) {
- 					powerUpPixmap = Assets.stain2;
+ 					powerUpPixmap = Assets.speedup;
  				}
  				if (powerUp == PowerUpType.STUN) {
- 					powerUpPixmap = Assets.stain3;
+ 					powerUpPixmap = Assets.stun;
  				}
  				g.drawPixmap(powerUpPixmap, x, y);
  				x += 40;

@@ -26,18 +26,6 @@ public class Player {
 		this.direction = DEFAULT;
 	}
 	
-	public void storePowerUps(PowerUpType type)
-	{
-		powerUpList.add(type);
-	}
-	
-	// TODO Scott, where do we put this?
-	
-	public List<PowerUpType> getPowerUps()
-	{
-		return powerUpList;
-	}
-	
 	public void moveUp() {
 		direction = UP; 
 	}
