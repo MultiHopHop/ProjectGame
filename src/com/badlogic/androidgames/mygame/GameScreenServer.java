@@ -1,6 +1,7 @@
 package com.badlogic.androidgames.mygame;
 
 import java.util.List;
+import java.util.Random;
 
 import android.graphics.Color;
 import android.util.Log;
@@ -12,11 +13,11 @@ import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Screen;
 
 /**
- * This is the game screen for server
- * It handles all the requests from clients and broadcast the update message
+ * This is the game screen for server It handles all the requests from clients
+ * and broadcast the update message
  * 
  * @author zianli
- *
+ * 
  */
 public class GameScreenServer extends Screen {
 	enum GameState {
@@ -26,9 +27,15 @@ public class GameScreenServer extends Screen {
 	GameState state = GameState.Ready;
 	World world;
 	String score = "0";
-	private static float timer; // The timer indicates state of game, unit is second
+	private static float timer; // The timer indicates state of game, unit is
+								// second
+	private static float powerUpTimer;
+	private final int powerUpIntervalLow = 2;
+	private final int powerUpIntervalUp = 4;
+	private final int endTime = 30;
 	private ServerManagement sm;
 	Parser parser;
+	Random random = new Random();
 
 	public GameScreenServer(Game game, ServerManagement sm) {
 		super(game);
@@ -68,10 +75,13 @@ public class GameScreenServer extends Screen {
 			sm.write("ready");
 			state = GameState.Running;
 			timer = 0;
+			powerUpTimer = 0;
 		}
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
+		powerUpTimer += deltaTime;
+
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -122,28 +132,48 @@ public class GameScreenServer extends Screen {
 			String clientInput = sm.read();
 			Log.d("clientInput", clientInput);
 
-			// check if input is 'pause'
-			if (clientInput.equals("pause")) {
-				sm.write(clientInput);
-				state = GameState.Paused;
-				return;
-			}
-
 			String[] requests = clientInput.split("\n");
 
 			for (String request : requests) {
+				// check if input is 'pause'
+				if (request.equals("pause")) {
+					sm.write(clientInput);
+					state = GameState.Paused;
+					return;
+				}
 				parser.parse(request);
-				Log.d("clientMove", "direction: "
-						+ world.players.get(1).direction);
+//				Log.d("clientMove", "direction: "
+//						+ world.players.get(1).direction);
 				sm.write(request);
 			}
+		}
 
+		// spawn power up
+		float randomTime = random.nextFloat()
+				* (powerUpIntervalUp - powerUpIntervalLow) + powerUpIntervalLow;
+		if (powerUpTimer > randomTime) {
+			world.placePowerUp();
+			String message = "";
+			switch (world.powerUp.type) {
+			case SPEEDUP:
+				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" speedup";
+				break;
+			case STUN:
+				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" stun";
+				break;
+			case BOMB:
+				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" bomb";
+				break;
+			}
+			sm.write(message);
+			Log.d("CheckPowerUp", "message: "+message);
+			powerUpTimer -= randomTime;
 		}
 
 		world.update(deltaTime);
 
 		// end of game
-		if (timer > 20) {
+		if (timer > endTime) {
 			if (Settings.soundEnabled) {
 				Assets.bitten.play(1);
 			}
@@ -160,15 +190,14 @@ public class GameScreenServer extends Screen {
 				sm.write("resume");
 				state = GameState.Running;
 				return;
-			}
-			else if (input.equals("endGame")) {
+			} else if (input.equals("endGame")) {
 				sm.write(input);
 				sm.stop();
 				game.setScreen(new MainMenuScreen(game));
 				return;
 			}
 		}
-		
+
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -187,7 +216,7 @@ public class GameScreenServer extends Screen {
 					sm.stop();
 					game.setScreen(new MainMenuScreen(game));
 					return;
-				}				
+				}
 			}
 		}
 	}
@@ -229,7 +258,7 @@ public class GameScreenServer extends Screen {
 	private void drawWorld(World world) {
 		Graphics g = game.getGraphics();
 		List<Player> players = world.players;
-		PowerUp powerUp = world.powerUp;
+		List<PowerUp> powerUpList = world.powerUpList;
 		int x, y;
 
 		for (int i = 0; i < world.WORLD_WIDTH; i++) {
@@ -250,23 +279,43 @@ public class GameScreenServer extends Screen {
 				default:
 					g.drawRect(i * 32, j * 32, 32, 32, Color.GRAY);
 				}
-				
+
 			}
 		}
 
-//		Pixmap powerUpPixmap = null;
-//		if (powerUp != null) {
-//			if (powerUp.type == PowerUp.SPEEDUP) {
-//				powerUpPixmap = Assets.stain1;
-//			}
-//			if (powerUp.type == PowerUp.STUN) {
-//				powerUpPixmap = Assets.stain3;
-//			}
-//			Log.d("DrawWorldTest", "powerup");
-//			x = powerUp.x * 32;
-//			y = powerUp.y * 32;
-//			g.drawPixmap(powerUpPixmap, x, y);
-//		}
+		// draw powerup(s)
+		Pixmap powerUpPixmap = null;
+		if (!powerUpList.isEmpty()) {
+			for (PowerUp powerUp : powerUpList) {
+				if (powerUp.type == PowerUpType.BOMB) {
+					powerUpPixmap = Assets.stain1;
+				}
+				if (powerUp.type == PowerUpType.SPEEDUP) {
+					powerUpPixmap = Assets.stain2;
+				}
+				if (powerUp.type == PowerUpType.STUN) {
+					powerUpPixmap = Assets.stain3;
+				}
+				// Log.d("PowerUpTest", "powerup drawn");
+				x = powerUp.x * 32;
+				y = powerUp.y * 32;
+				g.drawPixmap(powerUpPixmap, x, y);
+			}
+		}
+
+		// Pixmap powerUpPixmap = null;
+		// if (powerUp != null) {
+		// if (powerUp.type == PowerUp.SPEEDUP) {
+		// powerUpPixmap = Assets.stain1;
+		// }
+		// if (powerUp.type == PowerUp.STUN) {
+		// powerUpPixmap = Assets.stain3;
+		// }
+		// Log.d("DrawWorldTest", "powerup");
+		// x = powerUp.x * 32;
+		// y = powerUp.y * 32;
+		// g.drawPixmap(powerUpPixmap, x, y);
+		// }
 
 		for (Player player : players) {
 			Pixmap headPixmap = Assets.tail;
@@ -286,14 +335,12 @@ public class GameScreenServer extends Screen {
 		Graphics g = game.getGraphics();
 		if (timer < 1) {
 			g.drawPixmap(Assets.numbers, 150, 100, 60, 0, 20, 32);
-		}
-		else if (timer < 2) {
+		} else if (timer < 2) {
 			g.drawPixmap(Assets.numbers, 150, 100, 40, 0, 20, 32);
-		}
-		else if (timer < 3) {
+		} else if (timer < 3) {
 			g.drawPixmap(Assets.numbers, 150, 100, 20, 0, 20, 32);
 		}
-//		g.drawPixmap(Assets.ready, 47, 100);
+		// g.drawPixmap(Assets.ready, 47, 100);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
