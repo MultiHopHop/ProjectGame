@@ -1,6 +1,8 @@
 package com.badlogic.androidgames.mygame;
 
+
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -21,8 +23,19 @@ public class Player {
 	public Player(int x, int y) {
 		this.x = x;
 		this.y = y;
-//		this.powerUp = powerUp;		
 		this.direction = DEFAULT;
+	}
+	
+	public void storePowerUps(PowerUpType type)
+	{
+		powerUpList.add(type);
+	}
+	
+	// TODO Scott, where do we put this?
+	
+	public List<PowerUpType> getPowerUps()
+	{
+		return powerUpList;
 	}
 	
 	public void moveUp() {
