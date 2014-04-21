@@ -27,7 +27,7 @@ public class GameScreen extends Screen {
 	
 	public GameScreen(Game game) {
 		super(game);
-		world = new World();
+		world = new World(2);
 	}
 
 	@Override
