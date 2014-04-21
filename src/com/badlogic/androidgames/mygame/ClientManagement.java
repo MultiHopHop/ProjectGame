@@ -16,7 +16,7 @@ import android.util.Log;
  * This class handles client-side connection
  * 
  * @author zianli
- *
+ * 
  */
 public class ClientManagement {
 
@@ -24,20 +24,20 @@ public class ClientManagement {
 	private final String SERVER_IP;
 	private InetAddress serverAddr;
 	private Socket socket;
-	private  BufferedReader reader;
-	private  PrintWriter writer;
+	private BufferedReader reader;
+	private PrintWriter writer;
 	public int clientIndex = 0; // default
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
-		
+
 		try {
 			this.serverAddr = InetAddress.getByName(SERVER_IP);
 			this.socket = new Socket(serverAddr, SERVERPORT);
-			this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.reader = new BufferedReader(new InputStreamReader(
+					socket.getInputStream()));
 			this.writer = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(socket.getOutputStream())),
-					true);
+					new OutputStreamWriter(socket.getOutputStream())), true);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,21 +45,19 @@ public class ClientManagement {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
-	
-	public String read(){
+
+	public String readLine() {
 		StringBuilder builder = new StringBuilder();
 		try {
-			do {
-				builder.append(reader.readLine());
-			} while (reader.ready());
+			builder.append(reader.readLine());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String output = builder.toString();
-		Log.d("ClientRead", output);
+		// Log.d("ClientRead", output);
 		return output;
 	}
 	
@@ -73,8 +71,8 @@ public class ClientManagement {
 		}
 		return output;
 	}
-	
-	public void write(String msg){
+
+	public void write(String msg) {
 		writer.println(msg);
 		writer.flush();
 	}

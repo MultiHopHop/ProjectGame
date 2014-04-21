@@ -10,7 +10,6 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Screen;
-import com.badlogic.androidgames.mygame.GameScreenServer.GameState;
 
 public class GameScreenClient extends Screen {
 	enum GameState {
@@ -57,15 +56,16 @@ public class GameScreenClient extends Screen {
 	private void updateReady(List<TouchEvent> touchEvents) {
 		// Log.d("ClientReadgState", "timer: "+timer);
 
-		if (cm.ready() && cm.read().equals("ready")) {
+		if (cm.ready() && cm.readLine().equals("ready")) {
 			state = GameState.Running;
 			timer = 0;
 		}
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
-		// Log.d("gameState", "running");
 
+		String tempString = "";
+		
 		// handle touch input
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
@@ -76,6 +76,7 @@ public class GameScreenClient extends Screen {
 						Assets.click.play(1);
 					}
 					cm.write("pause");
+					break;
 					// state = GameState.Paused;
 				}
 			}
@@ -85,61 +86,71 @@ public class GameScreenClient extends Screen {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					cm.write("Player" + cm.clientIndex + " move right");
+					tempString = "Player" + cm.clientIndex + " move right";
+//					cm.write("Player" + cm.clientIndex + " move right");
 				}
 				if (inBounds(event, 192, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					cm.write("Player" + cm.clientIndex + " move down");
+					tempString = "Player" + cm.clientIndex + " move right";
+//					cm.write("Player" + cm.clientIndex + " move right");
 				}
 				if (inBounds(event, 128, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					cm.write("Player" + cm.clientIndex + " move left");
+					tempString = "Player" + cm.clientIndex + " move left";
+//					cm.write("Player" + cm.clientIndex + " move left");
 				}
 				if (inBounds(event, 192, 352, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					cm.write("Player" + cm.clientIndex + " move up");
+					tempString = "Player" + cm.clientIndex + " move up";
+//					cm.write("Player" + cm.clientIndex + " move up");
 				}
 			}
+		}
+		if (!tempString.equals("")) {
+			cm.write(tempString);
+			Log.d("ClientWrite", "start: "+tempString);
 		}
 
 		// handle request from server
 		if (cm.ready()) {
-			String serverRequest = cm.read();
-			Log.d("ServerRequest", serverRequest);
+			String serverRequest = cm.readLine();
+			Log.d("ServerRequest", "start: "+serverRequest);
 
-			// check if it is 'pause'
-			if (serverRequest.equals("pause")) {
-				cm.write(serverRequest);
-				state = GameState.Paused;
-				return;
-			}
-
-			// check if it is 'endGame'
-			if (serverRequest.equals("endGame")) {
-				cm.stop();
-				state = GameState.GameOver;
-			}
+			
 
 			// handle the requests from server, which would be moves of all
 			// players
 			String[] requests = serverRequest.split("\n");
 			for (String request : requests) {
+				// check if it is 'pause'
+				if (request.equals("pause")) {
+					cm.write(serverRequest);
+					state = GameState.Paused;
+					return;
+				}
+
+				// check if it is 'endGame'
+				if (request.equals("endGame")) {
+					cm.stop();
+					state = GameState.GameOver;
+					return;
+				}
+				
 				parser.parse(request);
 			}
 		}
-
-		world.update(deltaTime);
+		// world.update(deltaTime);
 	}
 
 	private void updatePaused(List<TouchEvent> touchEvents) {
 		if (cm.ready()) {
-			String input = cm.read();
+			String input = cm.readLine();
 			if (input.equals("resume")) {
 				state = GameState.Running;
 				return;

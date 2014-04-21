@@ -33,18 +33,19 @@ public class Parser {
 //		if (flag == -1) {
 //			return;
 //		}
-		Log.d("Parser", "Agent: "+agent);
+//		Log.d("Parser", "Agent: "+agent);
+//		Log.d("Parser", "Input: "+input);
 		
 		if (agent.matches("Player[0-3]")) {
 			int position = agent.length() - 1;
-			Log.d("Parser", "position: "+position);
+//			Log.d("Parser", "position: "+position);
 			char temp = agent.charAt(position);
-			Log.d("Parser", "temp: "+temp);
+//			Log.d("Parser", "temp: "+temp);
 			playerIndex = temp - '0';
-			Log.d("Parser", "index: "+playerIndex);
+//			Log.d("Parser", "index: "+playerIndex);
 			if (command.equals("move")) {
 				if (argument.equals("up")) {
-					Log.d("Parser", "player"+playerIndex+" move up");
+//					Log.d("Parser", "player"+playerIndex+" move up");
 					world.players.get(playerIndex).moveUp();
 				} else if (argument.equals("down")) {
 					world.players.get(playerIndex).moveDown();
@@ -58,6 +59,9 @@ public class Parser {
 		}
 		
 		if (agent.equals("Server")) {
+			if (command.equals("update")) {
+				world.update();
+			}
 			if (command.equals("spawnpowerup")) {
 				String[] xy = argument.split(" ");
 				int x = Integer.parseInt(xy[0]);
@@ -92,19 +96,18 @@ public class Parser {
 
 	private void lexer(String input) {
 		Pattern patterns = Pattern.compile("((Player[0-3])|Server)|"
-				+ "(move|spawnpowerup)|"
+				+ "(move|spawnpowerup|update)|"
 				+ "(up|down|right|left|([0-9]+ [0-9]+ (speedup|stun|bomb)))|" + "(-?[01])");
 		Matcher matcher = patterns.matcher(input);
 		while (matcher.find()) {
 			if (matcher.group().matches("(Player[0-3])|Server")) {
 				agent = matcher.group();
-			} else if (matcher.group().matches("(move|spawnpowerup)")) {
+			} else if (matcher.group().matches("(move|spawnpowerup|update)")) {
 				command = matcher.group();
 			} else if (matcher.group().matches(
 					"(up|down|right|left|([0-9]+ [0-9]+ (speedup|stun|bomb)))")) {
 				argument = matcher.group();
 			} else if (matcher.group().matches("-?[01]")) {
-				System.out.println("Flag: " + matcher.group());
 				flag = Integer.parseInt(matcher.group());
 			}
 		}

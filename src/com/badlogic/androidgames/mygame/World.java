@@ -23,7 +23,7 @@ public class World {
 	public int board[][] = new int[WORLD_WIDTH][WORLD_HEIGHT];
 
 	float tickTime = 0;
-	// tick is the interval between each move. 
+	// tick is the interval between each move.
 	// This part should be deleted for actual implementation
 	float tick = TICK_INITIAL;
 	float powerupCounter = 0;
@@ -36,24 +36,24 @@ public class World {
 			break;
 		case 2:
 			players.add(new Player(0, 0));
-			players.add(new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1));
+			players.add(new Player(WORLD_WIDTH - 1, WORLD_HEIGHT - 1));
 			break;
 		case 3:
 			players.add(new Player(0, 0));
-			players.add(new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1));
-			players.add(new Player(0, WORLD_HEIGHT-1));
+			players.add(new Player(WORLD_WIDTH - 1, WORLD_HEIGHT - 1));
+			players.add(new Player(0, WORLD_HEIGHT - 1));
 			break;
 		case 4:
 			players.add(new Player(0, 0));
-			players.add(new Player(WORLD_WIDTH-1, WORLD_HEIGHT-1));
-			players.add(new Player(0, WORLD_HEIGHT-1));
-			players.add(new Player(WORLD_WIDTH-1, 0));
-			break;		
+			players.add(new Player(WORLD_WIDTH - 1, WORLD_HEIGHT - 1));
+			players.add(new Player(0, WORLD_HEIGHT - 1));
+			players.add(new Player(WORLD_WIDTH - 1, 0));
+			break;
 		}
-		
+
 		numPlayer = players.size();
-		
-//		powerUp = null;
+
+		// powerUp = null;
 		powerUpList = new LinkedList<PowerUp>();
 
 		for (int i = 0; i < WORLD_WIDTH; i++) {
@@ -62,8 +62,8 @@ public class World {
 			}
 		}
 
-		for (int i=0; i<numPlayer; i++) {
-			board[players.get(i).x][players.get(i).y] = i+1;
+		for (int i = 0; i < numPlayer; i++) {
+			board[players.get(i).x][players.get(i).y] = i + 1;
 		}
 		Log.d("WorldTest", "World Created");
 
@@ -77,23 +77,23 @@ public class World {
 		int powerY = random.nextInt(WORLD_HEIGHT);
 		boolean foundSlot = false;
 		boolean emptySlot = false;
-		
+
 		while (!foundSlot) {
 			emptySlot = true;
-			for (Player player: players) {
+			for (Player player : players) {
 				if (powerX == player.x && powerY == player.y) {
 					emptySlot = false;
 					break;
-				}			
+				}
 			}
-			
-			for (PowerUp powerUp: powerUpList) {
+
+			for (PowerUp powerUp : powerUpList) {
 				if (powerUp.x == powerX && powerUp.y == powerY) {
 					emptySlot = false;
 					break;
 				}
 			}
-			
+
 			if (!emptySlot) {
 				powerX += 1;
 				if (powerX >= WORLD_WIDTH) {
@@ -103,61 +103,51 @@ public class World {
 						powerY = 0;
 					}
 				}
-			}
-			else {
-				powerUp = new PowerUp(powerX, powerY, PowerUpType.randomPowerup());
+			} else {
+				powerUp = new PowerUp(powerX, powerY,
+						PowerUpType.randomPowerup());
 				powerUpList.add(powerUp);
 				foundSlot = true;
 			}
 		}
 	}
-	
+
 	public void placePowerUp(int powerX, int powerY, PowerUpType type) {
 		powerUpList.add(new PowerUp(powerX, powerY, type));
 	}
 
-	public void update(float deltaTime) {
+	public void update() {
 		if (gameOver) {
 			return;
 		}
 
-		tickTime += deltaTime;
-		powerupCounter += deltaTime;
+		// tickTime += deltaTime;
+		// powerupCounter += deltaTime;
 
-		
-//		if (counter > TICK_POWERUP && powerUp == null) {
-//			placePowerUp();
-//			if (tick - TICK_DECREMENT > 0) {
-//				tick -= TICK_DECREMENT;
-//			}
-//		}
+		// while (tickTime > tick) {
 
-		while (tickTime > tick) {
-//			Log.d("checkWolrd", "timer: "+tickTime);
-//			Log.d("checkWorld", "tick: "+tick);
-//			
-//			Log.d("checkWorld", "dir0: "+players.get(0).direction);
-//			Log.d("checkWorld", "dir1: "+players.get(1).direction);
+		for (int i = 0; i < numPlayer; i++) {
+			players.get(i).advance();
+			board[players.get(i).x][players.get(i).y] = i + 1;
 
-			for (int i=0; i<numPlayer; i++) {
-				players.get(i).advance();
-				board[players.get(i).x][players.get(i).y] = i+1;
-				
-				if (!powerUpList.isEmpty()) {
-					for (PowerUp powerUp: powerUpList) {
-						if (players.get(i).x == powerUp.x && players.get(i).y == powerUp.y) { 
-							players.get(i).powerUp = powerUp.type;
-							powerUpList.remove(powerUp);
-							break;
-						}
-					}					
+			if (!powerUpList.isEmpty()) {
+				for (PowerUp powerUp : powerUpList) {
+					if (players.get(i).x == powerUp.x
+							&& players.get(i).y == powerUp.y) {
+						players.get(i).powerUp = powerUp.type;
+						powerUpList.remove(powerUp);
+						break;
+					}
 				}
 			}
-			tickTime -= tick;
-//			Log.d("checkWorld", "coord0: "+players.get(1).x+";"+players.get(1).y);
-//			Log.d("checkWorld", "coord1: "+players.get(1).x+";"+players.get(1).y);
-
 		}
+		// tickTime -= tick;
+		// Log.d("checkWorld",
+		// "coord0: "+players.get(1).x+";"+players.get(1).y);
+		// Log.d("checkWorld",
+		// "coord1: "+players.get(1).x+";"+players.get(1).y);
+
+		// }
 	}
 
 	public void updateSquare(int x, int y) {

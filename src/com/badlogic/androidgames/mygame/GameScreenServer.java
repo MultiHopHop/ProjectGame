@@ -24,22 +24,30 @@ public class GameScreenServer extends Screen {
 		Ready, Running, Paused, GameOver
 	}
 
-	GameState state = GameState.Ready;
+	private final int powerUpIntervalLow = 8;
+	private final int powerUpIntervalUp = 10;
+	private final int endTime = 30;
+	private static final float TICK_INITIAL = 1f;
+//	private static final float TICK_DECREMENT = 0.05f;
+	
 	World world;
 	String score = "0";
+	
 	private static float timer; // The timer indicates state of game, unit is
 								// second
 	private static float powerUpTimer;
-	private final int powerUpIntervalLow = 2;
-	private final int powerUpIntervalUp = 4;
-	private final int endTime = 30;
+	private static float worldTimer;
+	private static float tick = TICK_INITIAL;
+	
+	private GameState state;
 	private ServerManagement sm;
 	Parser parser;
 	Random random = new Random();
+	private static String tempString = "";
 
 	public GameScreenServer(Game game, ServerManagement sm) {
 		super(game);
-
+		state = GameState.Ready;
 		this.sm = sm;
 		world = new World(sm.sockets.size() + 1);
 		timer = 0;
@@ -76,12 +84,14 @@ public class GameScreenServer extends Screen {
 			state = GameState.Running;
 			timer = 0;
 			powerUpTimer = 0;
+			worldTimer = 0;
 		}
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
 		powerUpTimer += deltaTime;
-
+		worldTimer += deltaTime;
+		
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -101,31 +111,39 @@ public class GameScreenServer extends Screen {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveRight();
-					sm.write("Player0 move right");
+					tempString = "Player0 move right";
+//					sm.write("Player0 move right");
 				}
 				if (inBounds(event, 192, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveDown();
-					sm.write("Player0 move down");
+					tempString = "Player0 move down";
+//					sm.write("Player0 move down");
 				}
 				if (inBounds(event, 128, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveLeft();
-					sm.write("Player0 move left");
+					tempString = "Player0 move left";
+//					sm.write("Player0 move left");
 				}
 				if (inBounds(event, 192, 352, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					world.players.get(0).moveUp();
-					sm.write("Player0 move up");
-				}
+					tempString = "Player0 move up";
+//					sm.write("Player0 move up");
+				}			
 			}
 		}
+//		builder.append(inputMessage);
+//		if (!tempString.equals("")) {
+//			sm.write(tempString + "\n");
+//		}
 
 		// handle request from clients
 		if (sm.ready()) {
@@ -141,9 +159,11 @@ public class GameScreenServer extends Screen {
 					state = GameState.Paused;
 					return;
 				}
+				
 				parser.parse(request);
-//				Log.d("clientMove", "direction: "
-//						+ world.players.get(1).direction);
+				// Log.d("clientMove", "direction: "
+				// + world.players.get(1).direction);
+//				builder.append(request);
 				sm.write(request);
 			}
 		}
@@ -156,21 +176,43 @@ public class GameScreenServer extends Screen {
 			String message = "";
 			switch (world.powerUp.type) {
 			case SPEEDUP:
-				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" speedup";
+				message = "Server spawnpowerup " + world.powerUp.x + " "
+						+ world.powerUp.y + " speedup";
 				break;
 			case STUN:
-				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" stun";
+				message = "Server spawnpowerup " + world.powerUp.x + " "
+						+ world.powerUp.y + " stun";
 				break;
 			case BOMB:
-				message = "Server spawnpowerup "+world.powerUp.x+" "+world.powerUp.y+" bomb";
+				message = "Server spawnpowerup " + world.powerUp.x + " "
+						+ world.powerUp.y + " bomb";
 				break;
 			}
+//			if (message)
+//			builder.append(message);
 			sm.write(message);
-			Log.d("CheckPowerUp", "message: "+message);
+			Log.d("ServerWrite", "message: " + message);
 			powerUpTimer -= randomTime;
 		}
-
-		world.update(deltaTime);
+		
+//		String finalMessage = builder.toString();
+//		Log.d("ServerWrite", finalMessage);
+//		if (!finalMessage.equals("")) {
+//			sm.write(builder.toString());
+//		}
+		
+		// update world
+		while (worldTimer > tick) {
+			// broadcast move of player 0
+			if (!tempString.equals("")) {
+				sm.write(tempString);
+				tempString = "";
+			}
+			sm.write("Server update");
+			world.update();
+			Log.d("ServerWrite", "Server update");
+			worldTimer -= tick;
+		}
 
 		// end of game
 		if (timer > endTime) {
@@ -187,11 +229,11 @@ public class GameScreenServer extends Screen {
 		if (sm.ready()) {
 			String input = sm.read();
 			if (input.equals("resume")) {
-				sm.write("resume");
+				sm.write("resume\n");
 				state = GameState.Running;
 				return;
 			} else if (input.equals("endGame")) {
-				sm.write(input);
+				sm.write(input+"\n");
 				sm.stop();
 				game.setScreen(new MainMenuScreen(game));
 				return;

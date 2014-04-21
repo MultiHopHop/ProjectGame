@@ -63,6 +63,7 @@ public class ServerManagement {
 		if (sockets.isEmpty()) {
 			return;
 		}
+//		Log.d("ServerWrite", msg);
 		for (Socket socket : sockets) {
 			try {
 				writer = new PrintWriter(new BufferedWriter(
@@ -70,7 +71,6 @@ public class ServerManagement {
 				writer.println(msg);		
 				writer.flush();
 //				writer.close();
-				Log.d("ServerWrite", msg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
