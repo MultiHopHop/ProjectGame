@@ -57,7 +57,7 @@ public class ServerManagement {
 		return false;
 	}
 
-	public void authenticate() {
+	public void initializeAuthenticate() {
 		for (Socket socket: sockets) {
 			T2ServerAuthentication serverAuth = new T2ServerAuthentication(socket, "Hello, I am server");
 			try {

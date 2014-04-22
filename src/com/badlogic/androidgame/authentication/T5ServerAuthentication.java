@@ -49,7 +49,7 @@ public class T5ServerAuthentication {
 		System.out.println("Sent: " + Arrays.toString(pubKey.getEncoded()));
 		socket.getOutputStream().flush();
 
-		// part 3 receive serverPubKey
+		// part 3 receive clientPubKey
 		byte[] lenb = new byte[4];
 		socket.getInputStream().read(lenb, 0, 4);
 		ByteBuffer bb1 = ByteBuffer.wrap(lenb);

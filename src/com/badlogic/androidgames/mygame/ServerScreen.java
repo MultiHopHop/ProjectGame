@@ -174,7 +174,7 @@ public class ServerScreen extends Screen {
 				connected = true;
 			}
 			
-			sm.authenticate();
+			sm.initializeAuthenticate();
 			
 			/*CommunicationThread commThread = new CommunicationThread();
 			new Thread(commThread).start();*/
