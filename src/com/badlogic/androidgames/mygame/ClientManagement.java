@@ -52,7 +52,7 @@ public class ClientManagement {
 		StringBuilder builder = new StringBuilder();
 		try {
 			do {
-				builder.append(reader.readLine());
+				builder.append(reader.readLine() + "\n");
 			} while (reader.ready());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

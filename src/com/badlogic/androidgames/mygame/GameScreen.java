@@ -98,7 +98,7 @@ public class GameScreen extends Screen {
 			break;
 		}
 		
-		world.update(deltaTime);
+		world.update();
 		if (world.gameOver) {
 			if (Settings.soundEnabled) {
 				Assets.bitten.play(1);

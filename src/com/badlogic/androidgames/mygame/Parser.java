@@ -71,6 +71,9 @@ public class Parser {
 		}
 
 		if (agent.equals("Server")) {
+			if (command.equals("update")) {
+				world.update();
+			}
 			if (command.equals("spawnpowerup")) {
 				String[] xy = argument.split(" ");
 				int x = Integer.parseInt(xy[0]);
@@ -105,13 +108,13 @@ public class Parser {
 
 	private void lexer(String input) {
 		Pattern patterns = Pattern.compile("((Player[0-3])|Server)|"
-				+ "(move|spawnpowerup|activate)|"
+				+ "(move|spawnpowerup|activate|update)|"
 				+ "(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))|" + "(-?[01])");
 		Matcher matcher = patterns.matcher(input);
 		while (matcher.find()) {
 			if (matcher.group().matches("(Player[0-3])|Server")) {
 				agent = matcher.group();
-			} else if (matcher.group().matches("(move|spawnpowerup|activate)")) {
+			} else if (matcher.group().matches("(move|spawnpowerup|activate|update)")) {
 				command = matcher.group();
 			} else if (matcher.group().matches(
 					"(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))")) {

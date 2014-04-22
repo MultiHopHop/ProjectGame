@@ -121,76 +121,53 @@ public class World {
 		powerUpList.add(new PowerUp(powerX, powerY, type));
 	}
 
-	public void update(float deltaTime) {
+	public void update() {
 		if (gameOver) {
 			return;
 		}
 
-		tickTime += deltaTime;
-		powerupCounter += deltaTime;
-
-		
-//		if (counter > TICK_POWERUP && powerUp == null) {
-//			placePowerUp();
-//			if (tick - TICK_DECREMENT > 0) {
-//				tick -= TICK_DECREMENT;
-//			}
-//		}
-
-		while (tickTime > tick) {
-//			Log.d("checkWolrd", "timer: "+tickTime);
-//			Log.d("checkWorld", "tick: "+tick);
-//			
-//			Log.d("checkWorld", "dir0: "+players.get(0).direction);
-//			Log.d("checkWorld", "dir1: "+players.get(1).direction);
-
-			for (int i=0; i<numPlayers; i++) {
-				
-				players.get(i).advance();
-				board[players.get(i).x][players.get(i).y] = i+1;
-				Log.d("World", "player"+i+" x:"+players.get(i).x+" y:"+players.get(i).y );
-				
-				if(players.get(i).step == 2){
-					Log.d("World", "step: "+players.get(i).step);
-					int x = players.get(i).x;
-					Log.d("World", "x: "+x);
-					int lastX = players.get(i).lastX;
-					Log.d("World", "lastX: "+lastX);
-					int y = players.get(i).y;
-					Log.d("World", "y: "+y);
-					int lastY = players.get(i).lastY;
-					Log.d("World", "lastY: "+lastY);
-					if(y>lastY){
-						board[x][lastY+1] = i+1;
-					}
-					if(y<lastY){
-						board[x][lastY-1] = i+1;
-					}
-					if(x>lastX){
-							board[lastX+1][y] = i+1;
-					}
-					if(x<lastX){
-						board[lastX-1][y] = i+1;
-					}
-										
+		for (int i=0; i<numPlayers; i++) {
+			
+			players.get(i).advance();
+			board[players.get(i).x][players.get(i).y] = i+1;
+			Log.d("World", "player"+i+" x:"+players.get(i).x+" y:"+players.get(i).y );
+			
+			if(players.get(i).step == 2){
+				Log.d("World", "step: "+players.get(i).step);
+				int x = players.get(i).x;
+				Log.d("World", "x: "+x);
+				int lastX = players.get(i).lastX;
+				Log.d("World", "lastX: "+lastX);
+				int y = players.get(i).y;
+				Log.d("World", "y: "+y);
+				int lastY = players.get(i).lastY;
+				Log.d("World", "lastY: "+lastY);
+				if(y>lastY){
+					board[x][lastY+1] = i+1;
 				}
-				
-				if (!powerUpList.isEmpty()) {
-					for (PowerUp powerUp: powerUpList) {
-						if (players.get(i).x == powerUp.x && players.get(i).y == powerUp.y) {
-							if(players.get(i).powerUpList.size()<4){
-								players.get(i).powerUpList.add(powerUp.type);
-							}
-							powerUpList.remove(powerUp);
-							break;
-						}
-					}					
+				if(y<lastY){
+					board[x][lastY-1] = i+1;
 				}
+				if(x>lastX){
+						board[lastX+1][y] = i+1;
+				}
+				if(x<lastX){
+					board[lastX-1][y] = i+1;
+				}
+									
 			}
-			tickTime -= tick;
-//			Log.d("checkWorld", "coord0: "+players.get(1).x+";"+players.get(1).y);
-//			Log.d("checkWorld", "coord1: "+players.get(1).x+";"+players.get(1).y);
-
+			
+			if (!powerUpList.isEmpty()) {
+				for (PowerUp powerUp: powerUpList) {
+					if (players.get(i).x == powerUp.x && players.get(i).y == powerUp.y) {
+						if(players.get(i).powerUpList.size()<4){
+							players.get(i).powerUpList.add(powerUp.type);
+						}
+						powerUpList.remove(powerUp);
+						break;
+					}
+				}					
+			}
 		}
 		
 		for(int index=0;index<playerPowerUpTime.size();index++){
@@ -213,7 +190,7 @@ public class World {
 	
 	public void speedup(final int playerIndex){
 		players.get(playerIndex).step = 2;
-		playerPowerUpTime.set(playerIndex, 300);
+		playerPowerUpTime.set(playerIndex, 6);
 		
 		
 	}
@@ -223,7 +200,7 @@ public class World {
 				Log.d("World", "player "+i+" got stunned");
 				players.get(i).step = 0;
 				players.get(i).stunned = true;
-				playerPowerUpTime.set(i, 300);
+				playerPowerUpTime.set(i, 5);
 			}
 		}
 		
