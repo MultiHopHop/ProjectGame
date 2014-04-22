@@ -49,7 +49,7 @@ public class T2ClientAuthentication {
 		int seedByteCount = 4;
 		nonceP = sr.generateSeed(seedByteCount);
 
-		// part 2 encode pubKey
+		// part 2 send pubKey
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.putInt(pubKey.getEncoded().length);
 		socket.getOutputStream().write(bb.array());

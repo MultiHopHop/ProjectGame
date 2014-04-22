@@ -29,7 +29,7 @@ public class ClientManagement {
 	private  BufferedReader reader;
 	private  PrintWriter writer;
 	public int clientIndex = 0; // default
-	int authenticationType; // 2-5
+	int authenticationType = 2; // 2-5
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
@@ -61,6 +61,8 @@ public class ClientManagement {
 				e.printStackTrace();
 			}
 		}
+		
+//		else if ()
 		
 	}
 	
