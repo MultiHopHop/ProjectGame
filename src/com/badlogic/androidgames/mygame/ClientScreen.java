@@ -175,7 +175,7 @@ public class ClientScreen extends Screen {
 			cm = new ClientManagement(SERVER_IP);
 			Log.d("ClientRequest", "request");
 			
-			cm.authenticate();
+			cm.initializeAuthenticate();
 			
 //			String input;
 //			input = cm.read();

@@ -10,6 +10,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.badlogic.androidgame.authentication.T2ClientAuthentication;
+
 import android.util.Log;
 
 /**
@@ -27,6 +29,7 @@ public class ClientManagement {
 	private  BufferedReader reader;
 	private  PrintWriter writer;
 	public int clientIndex = 0; // default
+	int authenticationType; // 2-5
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
@@ -48,14 +51,17 @@ public class ClientManagement {
 		
 	}
 	
-	public void authenticate() {
-		ClientAuthentication clientAuth = new ClientAuthentication(socket, "HelloWorld");
-		try {
-			clientAuth.t2Authentication();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void initializeAuthenticate() {
+		if (authenticationType == 2) {
+			T2ClientAuthentication clientAuth = new T2ClientAuthentication(socket, "HelloWorld");
+			try {
+				clientAuth.t2Authentication();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 	}
 	
 	public String read(){

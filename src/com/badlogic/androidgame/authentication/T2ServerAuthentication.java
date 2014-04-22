@@ -1,4 +1,4 @@
-package com.badlogic.androidgames.mygame;
+package com.badlogic.androidgame.authentication;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,7 +17,7 @@ import javax.crypto.Cipher;
 
 import android.util.Base64;
 
-public class ServerAuthentication {
+public class T2ServerAuthentication {
 
 	private Socket client;
 	private final String serverPassword;
@@ -28,7 +28,7 @@ public class ServerAuthentication {
 	private byte[] nonceP, nonceG;
 	private String clientPassword;
 
-	public ServerAuthentication(Socket socket, String password) {
+	public T2ServerAuthentication(Socket socket, String password) {
 		this.client = socket;
 		this.serverPassword = password;
 	}

@@ -1,4 +1,4 @@
-package com.badlogic.androidgames.mygame;
+package com.badlogic.androidgame.authentication;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,7 +18,7 @@ import javax.crypto.Cipher;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
-public class ClientAuthentication {
+public class T2ClientAuthentication {
 
 	private final String clientPassword;
 	private final int RSAKeySize = 512;
@@ -29,7 +29,7 @@ public class ClientAuthentication {
 	private Socket socket;
 	private String serverPassword;
 
-	public ClientAuthentication(Socket socket, String password) {
+	public T2ClientAuthentication(Socket socket, String password) {
 		this.socket = socket;
 		this.clientPassword = password;
 	}
@@ -151,4 +151,8 @@ public class ClientAuthentication {
 	public String getServerPassword() {
 		return serverPassword;
 	}
+	
+	
+	
+	//// 
 }

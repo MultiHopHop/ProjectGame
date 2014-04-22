@@ -11,6 +11,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.androidgame.authentication.T2ServerAuthentication;
+
 import android.util.Log;
 
 /**
@@ -57,7 +59,7 @@ public class ServerManagement {
 
 	public void authenticate() {
 		for (Socket socket: sockets) {
-			ServerAuthentication serverAuth = new ServerAuthentication(socket, "Hello, I am server");
+			T2ServerAuthentication serverAuth = new T2ServerAuthentication(socket, "Hello, I am server");
 			try {
 				serverAuth.t2Authentication();
 			} catch (Exception e) {
