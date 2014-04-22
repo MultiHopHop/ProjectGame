@@ -55,6 +55,18 @@ public class ServerManagement {
 		return false;
 	}
 
+	public void authenticate() {
+		for (Socket socket: sockets) {
+			ServerAuthentication serverAuth = new ServerAuthentication(socket, "Hello, I am server");
+			try {
+				serverAuth.authenticateServer();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	/**
 	 * This method writes to all clients
 	 * @param msg

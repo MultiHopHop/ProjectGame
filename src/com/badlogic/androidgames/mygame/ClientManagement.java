@@ -48,6 +48,16 @@ public class ClientManagement {
 		
 	}
 	
+	public void authenticate() {
+		ClientAuthentication clientAuth = new ClientAuthentication(socket, "HelloWorld");
+		try {
+			clientAuth.authenticate();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public String read(){
 		StringBuilder builder = new StringBuilder();
 		try {
