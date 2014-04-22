@@ -59,7 +59,7 @@ public class ServerManagement {
 		for (Socket socket: sockets) {
 			ServerAuthentication serverAuth = new ServerAuthentication(socket, "Hello, I am server");
 			try {
-				serverAuth.authenticateServer();
+				serverAuth.t2Authentication();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

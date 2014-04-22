@@ -51,7 +51,7 @@ public class ClientManagement {
 	public void authenticate() {
 		ClientAuthentication clientAuth = new ClientAuthentication(socket, "HelloWorld");
 		try {
-			clientAuth.authenticate();
+			clientAuth.t2Authentication();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
