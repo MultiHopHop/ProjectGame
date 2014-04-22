@@ -44,9 +44,19 @@ public class LoadingScreen extends Screen {
 	    Assets.server = g.newPixmap("server.png", PixmapFormat.ARGB4444);
 	    Assets.client = g.newPixmap("client.png", PixmapFormat.ARGB4444);
 	    Assets.numberpad = g.newPixmap("numberpad.png", PixmapFormat.ARGB4444);
-	    Assets.click = game.getAudio().newSound("click.ogg");
+	    Assets.bird = g.newPixmap("bird.png", PixmapFormat.ARGB4444);
+	    Assets.mochi = g.newPixmap("mochi.png", PixmapFormat.ARGB4444);
+	    Assets.winlose = g.newPixmap("winlose.png", PixmapFormat.ARGB4444);
+	    
+	    Assets.click = game.getAudio().newSound("bounce.ogg");
+	    Assets.click1 = game.getAudio().newSound("click.ogg");
 	    Assets.eat = game.getAudio().newSound("eat.ogg");
 	    Assets.bitten = game.getAudio().newSound("bitten.ogg");
+	    Assets.explode = game.getAudio().newSound("explosion.ogg");
+	    Assets.fastbounce = game.getAudio().newSound("fastbounce.mp3");
+	    Assets.gothit = game.getAudio().newSound("gothit.mp3");
+	    Assets.bowarrow = game.getAudio().newSound("bowarrow.mp3");
+	    
 	    Settings.load(game.getFileIO());
 	    game.setScreen(new MainMenuScreen(game));
 	}

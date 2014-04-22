@@ -36,8 +36,16 @@ public class Assets {
     public static Pixmap T3b;
     public static Pixmap T4b;
     public static Pixmap T5b;
+    public static Pixmap mochi;
+    public static Pixmap bird;
+    public static Pixmap winlose;
     
     public static Sound click;
+    public static Sound click1;
     public static Sound eat;
     public static Sound bitten;
+    public static Sound explode;
+    public static Sound fastbounce;
+    public static Sound bowarrow;
+    public static Sound gothit;
 }

@@ -13,6 +13,7 @@ import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.mygame.GameScreenServer.GameState;
 
 public class GameScreenClient extends Screen {
+	
 	enum GameState {
 		Ready, Running, Paused, GameOver
 	}
@@ -82,7 +83,7 @@ public class GameScreenClient extends Screen {
 			if (event.type == TouchEvent.TOUCH_UP) {
 				if (event.x < 64 && event.y < 64) {
 					if (Settings.soundEnabled) {
-						Assets.click.play(1);
+						Assets.click1.play(1);
 					}
 					cm.write("pause");
 					// state = GameState.Paused;
@@ -117,33 +118,85 @@ public class GameScreenClient extends Screen {
 				}
 				if (inBounds(event, 0, 352, 40, 40)) { //first power up
 					if(!world.players.get(playerNum).powerUpList.isEmpty()){
-						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
 			        	cm.write("Player" + playerNum + " activate "+list.get(0).toString());
+			        	PowerUpType p = list.get(0);
+			        	if (Settings.soundEnabled){
+			        		switch(p){
+			        			case SPEEDUP:
+			        				Assets.fastbounce.play(1);
+			        				break;
+			        			case STUN:
+			        				Assets.eat.play(2);
+			        				break;
+			        			case BOMB:
+			        				Assets.explode.play(1);
+			        				break;
+			        		}
+			        	}			        	
 			        	list.remove(0);
 					}
 				}
 				if (inBounds(event, 40, 352, 40, 40)) { //second power up
 					if(world.players.get(playerNum).powerUpList.size() > 1){
-						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
 			        	cm.write("Player" + playerNum + " activate "+list.get(1).toString());
+			        	PowerUpType p = list.get(1);
+			        	if (Settings.soundEnabled){
+			        		switch(p){
+				        		case SPEEDUP:
+			        				Assets.fastbounce.play(1);
+			        				break;
+			        			case STUN:
+			        				Assets.eat.play(2);
+			        				break;
+			        			case BOMB:
+			        				Assets.explode.play(1);
+			        				break;
+			        		}
+			        	}			        	
 			        	list.remove(1);
 					}
 				}
 				if (inBounds(event, 80, 352, 40, 40)) { //third power up
 					if(world.players.get(playerNum).powerUpList.size() > 2){
-						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
 			        	cm.write("Player" + playerNum + " activate "+list.get(2).toString());
+			        	PowerUpType p = list.get(2);
+			        	if (Settings.soundEnabled){
+			        		switch(p){
+				        		case SPEEDUP:
+			        				Assets.fastbounce.play(1);
+			        				break;
+			        			case STUN:
+			        				Assets.eat.play(2);
+			        				break;
+			        			case BOMB:
+			        				Assets.explode.play(1);
+			        				break;
+			        		}
+			        	}			        	
 			        	list.remove(2);
 					}
 				}
 				if (inBounds(event, 120, 352, 40, 40)) { //forth power up
 					if(world.players.get(playerNum).powerUpList.size() > 3){
-						if (Settings.soundEnabled) Assets.click.play(1);
 			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
 			        	cm.write("Player" + playerNum + " activate "+list.get(3).toString());
+			        	PowerUpType p = list.get(3);
+			        	if (Settings.soundEnabled){
+			        		switch(p){
+				        		case SPEEDUP:
+			        				Assets.fastbounce.play(1);
+			        				break;
+			        			case STUN:
+			        				Assets.eat.play(2);
+			        				break;
+			        			case BOMB:
+			        				Assets.explode.play(1);
+			        				break;
+			        		}
+			        	}			        	
 			        	list.remove(3);
 					}
 				}
@@ -181,6 +234,14 @@ public class GameScreenClient extends Screen {
 		}
 
 		//world.update(deltaTime);
+		
+		//stun sound
+		if(world.players.get(playerNum).stunnedsound){
+			if (Settings.soundEnabled){
+				Assets.gothit.play(2);
+			}
+			world.players.get(playerNum).stunnedsound = false;
+		}
 	}
 
 	private void updatePaused(List<TouchEvent> touchEvents) {
@@ -266,16 +327,16 @@ public class GameScreenClient extends Screen {
 					g.drawRect(i * 32, j * 32, 32, 32, Color.RED);
 					break;
 				case 2:
-					g.drawRect(i * 32, j * 32, 32, 32, Color.GREEN);
+					g.drawRect(i * 32, j * 32, 32, 32, Color.BLUE);
 					break;
 				case 3:
-					g.drawRect(i * 32, j * 32, 32, 32, Color.BLUE);
+					g.drawRect(i * 32, j * 32, 32, 32, Color.GREEN);
 					break;
 				case 4:
 					g.drawRect(i * 32, j * 32, 32, 32, Color.YELLOW);
 					break;
 				default:
-					g.drawRect(i * 32, j * 32, 32, 32, Color.GRAY);
+					g.drawRect(i * 32, j * 32, 32, 32, Color.WHITE);
 				}
 				// if (world.board[i][j] == 0) {
 				// g.drawRect(i*32, j*32, 32, 32, Color.GRAY);
@@ -305,9 +366,13 @@ public class GameScreenClient extends Screen {
 				g.drawPixmap(powerUpPixmap, x, y);
 			}
 		}
-
+		int index = 0;
 		for (Player player : players) {
-			Pixmap headPixmap = Assets.tail;
+			Pixmap headPixmap;
+			if(index == 0)
+				headPixmap = Assets.mochi;
+			else 
+				headPixmap = Assets.bird;
 			x = player.x * 32 + 16;
 			y = player.y * 32 + 16;
 			g.drawPixmap(headPixmap, x - headPixmap.getWidth() / 2, y
@@ -316,6 +381,7 @@ public class GameScreenClient extends Screen {
 			builder.append("x" + player.x);
 			builder.append("y" + player.y);
 			// Log.d("DrawWorldTest", builder.toString());
+			index++;
 		}
 
 	}
@@ -336,7 +402,7 @@ public class GameScreenClient extends Screen {
 	private void drawRunningUI() {
 		Graphics g = game.getGraphics();
 
-		for (int i = 1; i < world.WORLD_WIDTH - 1; i++) {
+		for (int i = 1; i < world.WORLD_WIDTH; i++) {
 			g.drawLine(i * 32, 0, i * 32, 320, Color.BLACK);
 		}
 		for (int j = 1; j < world.WORLD_HEIGHT; j++) {
@@ -392,7 +458,14 @@ public class GameScreenClient extends Screen {
 		for(int num :gridCount){
 			s += num+".";
 		}
-		drawText(g,s.substring(0, s.length()-1),62,50);
+		drawText(g,s.substring(0, s.length()-1),g.getWidth()/2-20,150);
+		
+		int p0 = gridCount[0];
+		int p1 = gridCount[1];
+		if(p1>p0)
+			g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 0, 240, 50);
+		else
+			g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 50, 240, 50);
 
 		g.drawPixmap(Assets.gameOver, 62, 100);
 		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);

@@ -200,6 +200,7 @@ public class World {
 				Log.d("World", "player "+i+" got stunned");
 				players.get(i).step = 0;
 				players.get(i).stunned = true;
+				players.get(i).stunnedsound = true;
 				playerPowerUpTime.set(i, 5);
 			}
 		}

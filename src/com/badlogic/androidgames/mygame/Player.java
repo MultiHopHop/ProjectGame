@@ -17,6 +17,7 @@ public class Player {
 	private int max_y = 9;
 	int step = 1;
 	boolean stunned = false;
+	boolean stunnedsound = false;
 	
 	public int lastX, lastY, x, y, direction;
 	List<PowerUpType> powerUpList = new LinkedList<PowerUpType>();

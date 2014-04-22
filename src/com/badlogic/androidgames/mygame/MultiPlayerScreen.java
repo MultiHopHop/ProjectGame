@@ -58,28 +58,28 @@ public class MultiPlayerScreen extends Screen {
 					t2 = true; t3 = false; t4 = false; t5 = false;
 					t = 2;
 					if (Settings.soundEnabled) {
-						Assets.click.play(1);
+						Assets.click1.play(1);
 					}
 				}
 				if (inBounds(event, 50, g.getHeight()/2-40, 40, 40)) { // T3 button
 					t2 = false; t3 = true; t4 = false; t5 = false;
 					t = 3;
 					if (Settings.soundEnabled) {
-						Assets.click.play(1);
+						Assets.click1.play(1);
 					}
 				}
 				if (inBounds(event, 100, g.getHeight()/2-40, 40, 40)) { // T4 button
 					t2 = false; t3 = false; t4 = true; t5 = false;
 					t = 4;
 					if (Settings.soundEnabled) {
-						Assets.click.play(1);
+						Assets.click1.play(1);
 					}
 				}
 				if (inBounds(event, 150, g.getHeight()/2-40, 40, 40)) { // T5 button
 					t2 = false; t3 = false; t4 = false; t5 = true;
 					t = 5;
 					if (Settings.soundEnabled) {
-						Assets.click.play(1);
+						Assets.click1.play(1);
 					}
 				}
 			}

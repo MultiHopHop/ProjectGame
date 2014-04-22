@@ -101,6 +101,7 @@ public class ClientScreen extends Screen {
 		g.drawPixmap(Assets.serverclient, g.getWidth()/2 -60, 0, 0, 48, 120, 48); // Client image
 		g.drawPixmap(Assets.serverclient, 0, 416, 0, 96, 120, 48); // Back button image
 		g.drawPixmap(Assets.serverclient, 200, 416, 0, 192, 120, 48); // Connect button image
+		g.drawPixmap(Assets.bird, g.getWidth() - 40, 0, 0, 0, 32, 32); // bird image
 		
 		if(!connected)
 			g.drawPixmap(Assets.numberpad, 0, 150, 0, 0, 163, 219); // numberpad image
@@ -203,12 +204,12 @@ public class ClientScreen extends Screen {
 					connected = true;
 				}
 			}
-//
-//			input = cm.read();
-//			if (input.contains("startgame")) {
-//				numPlayers = Integer.parseInt(cm.read().substring(0, 1));
-//				game.setScreen(new GameScreenClient(game, cm, numPlayers));
-//			}
+
+			input = cm.read();
+			if (input.contains("startgame")) {
+				numPlayers = Integer.parseInt(cm.read().substring(0, 1));
+				game.setScreen(new GameScreenClient(game, cm, numPlayers));
+			}
 			
 
 		}
