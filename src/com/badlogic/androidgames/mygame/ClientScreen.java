@@ -174,21 +174,24 @@ public class ClientScreen extends Screen {
 
 			cm = new ClientManagement(SERVER_IP);
 			Log.d("ClientRequest", "request");
-			String input;
-			input = cm.readLine();
-			Log.d("TestClient", input);
-			if (input.matches("[1-3]")) {
-				cm.clientIndex = Integer.parseInt(input);
-				connected = true;
-			}
-
-			input = cm.readLine();
-			Log.d("TestClient", input);
-			if (input.equals("startgame")) {
-				numPlayers = Integer.parseInt(cm.readLine());
-				Log.d("TestClient", String.valueOf(numPlayers));
-				game.setScreen(new GameScreenClient(game, cm, numPlayers));
-			}
+			
+			
+			
+//			String input;
+//			input = cm.readLine();
+//			Log.d("TestClient", input);
+//			if (input.matches("[1-3]")) {
+//				cm.clientIndex = Integer.parseInt(input);
+//				connected = true;
+//			}
+//
+//			input = cm.readLine();
+//			Log.d("TestClient", input);
+//			if (input.equals("startgame")) {
+//				numPlayers = Integer.parseInt(cm.readLine());
+//				Log.d("TestClient", String.valueOf(numPlayers));
+//				game.setScreen(new GameScreenClient(game, cm, numPlayers));
+//			}
 
 		}
 

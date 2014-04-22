@@ -45,7 +45,16 @@ public class ClientManagement {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+	}
+	
+	public void clientAuth() {
+		ClientAuthentication clientAuth = new ClientAuthentication(socket);
+		try {
+			clientAuth.authenticateServer();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public String readLine() {
