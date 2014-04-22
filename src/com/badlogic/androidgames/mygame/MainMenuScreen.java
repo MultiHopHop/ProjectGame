@@ -29,9 +29,8 @@ public class MainMenuScreen extends Screen {
 						Assets.click.play(1);
 					}
 				}
-				if (inBounds(event, 64, 220, 192, 42)) {
+				if (inBounds(event, 64, 220, 192, 42)) {  // play button
 					game.setScreen(new MultiPlayerScreen(game));
-//					game.setScreen(new GameScreen(game));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}

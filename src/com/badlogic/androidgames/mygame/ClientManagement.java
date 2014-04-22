@@ -11,6 +11,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.badlogic.androidgame.authentication.T2ClientAuthentication;
+import com.badlogic.androidgame.authentication.T3ClientAuthentication;
+import com.badlogic.androidgame.authentication.T4ClientAuthentication;
+import com.badlogic.androidgame.authentication.T5ClientAuthentication;
 
 import android.util.Log;
 
@@ -29,7 +32,7 @@ public class ClientManagement {
 	private  BufferedReader reader;
 	private  PrintWriter writer;
 	public int clientIndex = 0; // default
-	int authenticationType = 2; // 2-5
+	private int authenticationType = 2; // 2-5
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
@@ -51,18 +54,30 @@ public class ClientManagement {
 		
 	}
 	
-	public void initializeAuthenticate() {
-		if (authenticationType == 2) {
-			T2ClientAuthentication clientAuth = new T2ClientAuthentication(socket, "HelloWorld");
-			try {
-				clientAuth.t2Authentication();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public boolean initializeAuthenticate(int t) {
+		this.authenticationType = t;
+		try {
+			switch(authenticationType){
+				case 2:
+					T2ClientAuthentication clientAuth2 = new T2ClientAuthentication(socket, "HelloWorld");
+					return clientAuth2.t2Authentication();
+				case 3:
+					T3ClientAuthentication clientAuth3 = new T3ClientAuthentication(socket, "HelloWorld");
+					return clientAuth3.t3Authentication();
+				case 4:
+					T4ClientAuthentication clientAuth4 = new T4ClientAuthentication(socket, "HelloWorld");
+					return clientAuth4.t4Authentication();
+				case 5:
+					return false;
+					/*T5ClientAuthentication clientAuth5 = new T5ClientAuthentication(socket, "HelloWorld");
+					return clientAuth5.t5Authentication();*/
+				
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-//		else if ()
+		return false;
 		
 	}
 	

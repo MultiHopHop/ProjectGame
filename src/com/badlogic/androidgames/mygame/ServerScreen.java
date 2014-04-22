@@ -23,9 +23,13 @@ public class ServerScreen extends Screen {
 	Thread serverThread = null;
 	
 	boolean connected = false;
+	boolean authenticated = false;
+	
+	private int t;
 
-	public ServerScreen(Game game) {
+	public ServerScreen(Game game, Integer t) {
 		super(game);
+		this.t = t;
 		// default
 		numPlayers = 1;
 
@@ -84,7 +88,26 @@ public class ServerScreen extends Screen {
 			// draw number of players connected
 			drawText(g, String.valueOf(numPlayers), 20, 150);
 		}
-//			g.drawPixmap(Assets.server, 0, 150, 0, 0, 300, 50); // Player connected image
+		
+		if(authenticated) 
+			g.drawPixmap(Assets.client, 0, 200, 0, 50, 160, 50); // Autenticated image
+		
+		//T image
+		switch(t){
+			case 2:
+				g.drawPixmap(Assets.T2w, 0, 0, 0, 0, 40, 40);
+				break;
+			case 3:
+				g.drawPixmap(Assets.T3w, 0, 0, 0, 0, 40, 40);
+				break;
+			case 4:
+				g.drawPixmap(Assets.T4w, 0, 0, 0, 0, 40, 40);
+				break;
+			case 5:
+				g.drawPixmap(Assets.T5w, 0, 0, 0, 0, 40, 40);
+				break;
+			
+		}
 		
 		
 	}
@@ -174,36 +197,18 @@ public class ServerScreen extends Screen {
 				connected = true;
 			}
 			
-			sm.initializeAuthenticate();
+			authenticated = sm.initializeAuthenticate(t);
 			
-			/*CommunicationThread commThread = new CommunicationThread();
-			new Thread(commThread).start();*/
-			
-//			if (accepted) {
-//				numPlayers++;
-//				sm.singleWrite(String.valueOf(numPlayers - 1), numPlayers - 2);
-//				Log.d("ServerAccept", "Send to " + (numPlayers - 2));
-//			} else {
-//				Log.d("ServerAccept", "Fail to accept");
-//
-//			}
-		}
-	}
-
-	/*class CommunicationThread implements Runnable {
-
-		public void run() {
-
-			while (!Thread.currentThread().isInterrupted()) {
-
-				String read = ServerManagement.read();
-
-				updateConversationHandler.post(new updateUIThread(read));
+			if (accepted) {
+				numPlayers++;
+				sm.singleWrite(String.valueOf(numPlayers - 1), numPlayers - 2);
+				Log.d("ServerAccept", "Send to " + (numPlayers - 2));
+			} else {
+				Log.d("ServerAccept", "Fail to accept");
 
 			}
+			
 		}
-
-	}*/
-
+	}
 
 }

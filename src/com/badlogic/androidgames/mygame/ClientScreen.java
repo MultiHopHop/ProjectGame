@@ -16,9 +16,13 @@ public class ClientScreen extends Screen {
 	private int numPlayers;
 	
 	boolean connected = false;
+	boolean authenticated = false;
+	
+	private int t;
 
-	public ClientScreen(Game game) {
+	public ClientScreen(Game game, Integer t) {
 		super(game);
+		this.t = t;
 	}
 
 	@Override
@@ -105,7 +109,24 @@ public class ClientScreen extends Screen {
 		else drawText(g, SERVER_IP, 0, 80); // display IP
 		
 		if(connected) g.drawPixmap(Assets.client, 0, 110, 0, 0, 160, 50); // Player connected image
+		if(authenticated) g.drawPixmap(Assets.client, 0, 110+50, 0, 50, 160, 50); // Autenticated image
 		
+		//T image
+		switch(t){
+			case 2:
+				g.drawPixmap(Assets.T2w, 0, 0, 0, 0, 40, 40);
+				break;
+			case 3:
+				g.drawPixmap(Assets.T3w, 0, 0, 0, 0, 40, 40);
+				break;
+			case 4:
+				g.drawPixmap(Assets.T4w, 0, 0, 0, 0, 40, 40);
+				break;
+			case 5:
+				g.drawPixmap(Assets.T5w, 0, 0, 0, 0, 40, 40);
+				break;
+			
+		}
 		
 	}
 
@@ -167,50 +188,30 @@ public class ClientScreen extends Screen {
 		//@Override
 		public void run() {
 
-//			cm = new ClientManagement(SERVER_IP);
-//			
-//			CommunicationThread commThread = new CommunicationThread();
-//			new Thread(commThread).start();
-
 			cm = new ClientManagement(SERVER_IP);
 			Log.d("ClientRequest", "request");
 			
-			cm.initializeAuthenticate();
+			authenticated = cm.initializeAuthenticate(t);
 			
-//			String input;
-//			input = cm.read();
-//			String[] requests = input.split("\n");
-//			Log.d("TestClient", input);
-//			for (String request : requests) {
-//				if (request.matches("[1-3]")) {
-//					cm.clientIndex = Integer.parseInt(request);
-//					connected = true;
-//				}
-//			}
+			String input;
+			input = cm.read();
+			String[] requests = input.split("\n");
+			Log.d("TestClient", input);
+			for (String request : requests) {
+				if (request.matches("[1-3]")) {
+					cm.clientIndex = Integer.parseInt(request);
+					connected = true;
+				}
+			}
 //
 //			input = cm.read();
 //			if (input.contains("startgame")) {
 //				numPlayers = Integer.parseInt(cm.read().substring(0, 1));
 //				game.setScreen(new GameScreenClient(game, cm, numPlayers));
 //			}
+			
 
 		}
 
 	}
-	
-//	class CommunicationThread implements Runnable {
-//
-//		public void run() {
-//
-//			while (!Thread.currentThread().isInterrupted()) {
-//
-//				String read = ClientManagement.read();
-//
-//				if(read != null) connected = true;
-//			}
-//		}
-//		
-//	}
-
-
 }

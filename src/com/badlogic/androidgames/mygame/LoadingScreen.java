@@ -28,9 +28,14 @@ public class LoadingScreen extends Screen {
 	    Assets.headDown = g.newPixmap("headdown.png", PixmapFormat.ARGB4444);
 	    Assets.headRight = g.newPixmap("headright.png", PixmapFormat.ARGB4444);
 	    Assets.tail = g.newPixmap("tail.png", PixmapFormat.ARGB4444);
-	    //Assets.stain1 = g.newPixmap("stain1.png", PixmapFormat.ARGB4444);
-	    //Assets.stain2 = g.newPixmap("stain2.png", PixmapFormat.ARGB4444);
-	    //Assets.stain3 = g.newPixmap("stain3.png", PixmapFormat.ARGB4444);
+	    Assets.T2w = g.newPixmap("t2white.png", PixmapFormat.ARGB4444);
+	    Assets.T3w = g.newPixmap("t3white.png", PixmapFormat.ARGB4444);
+	    Assets.T4w = g.newPixmap("t4white.png", PixmapFormat.ARGB4444);
+	    Assets.T5w = g.newPixmap("t5white.png", PixmapFormat.ARGB4444);
+	    Assets.T2b = g.newPixmap("t2black.png", PixmapFormat.ARGB4444);
+	    Assets.T3b = g.newPixmap("t3black.png", PixmapFormat.ARGB4444);
+	    Assets.T4b = g.newPixmap("t4black.png", PixmapFormat.ARGB4444);
+	    Assets.T5b = g.newPixmap("t5black.png", PixmapFormat.ARGB4444);
 	    Assets.stun = g.newPixmap("stun.png", PixmapFormat.ARGB4444);
 	    Assets.bomb = g.newPixmap("bomb.png", PixmapFormat.ARGB4444);
 	    Assets.speedup = g.newPixmap("speedup.png", PixmapFormat.ARGB4444);

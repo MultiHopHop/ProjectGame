@@ -8,6 +8,13 @@ import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Screen;
 
 public class MultiPlayerScreen extends Screen {
+	
+	private boolean t2 = false;
+	private boolean t3 = false;
+	private boolean t4 = false;
+	private boolean t5 = false;
+	
+	private Integer t = null;	
 
 	public MultiPlayerScreen(Game game) {
 		super(game);
@@ -17,6 +24,7 @@ public class MultiPlayerScreen extends Screen {
 	public void update(float deltaTime) {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 		game.getInput().getKeyEvents();
+		Graphics g = game.getGraphics();
 		
 		int len = touchEvents.size();
 		for (int i=0; i<len; i++) {
@@ -31,13 +39,45 @@ public class MultiPlayerScreen extends Screen {
 				}
 				
 				if (inBounds(event, 0, 0, 120, 48)) { // server button
-					game.setScreen(new ServerScreen(game));
+					if(t!=null)
+						game.setScreen(new ServerScreen(game,t));
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 				}
 				if (inBounds(event, 200, 0, 120, 48)) { // client button
-					game.setScreen(new ClientScreen(game));
+					if(t!=null)
+						game.setScreen(new ClientScreen(game,t));
+					if (Settings.soundEnabled) {
+						Assets.click.play(1);
+					}
+				}
+				
+				
+				if (inBounds(event, 0, g.getHeight()/2-40, 40, 40)) { // T2 button
+					t2 = true; t3 = false; t4 = false; t5 = false;
+					t = 2;
+					if (Settings.soundEnabled) {
+						Assets.click.play(1);
+					}
+				}
+				if (inBounds(event, 50, g.getHeight()/2-40, 40, 40)) { // T3 button
+					t2 = false; t3 = true; t4 = false; t5 = false;
+					t = 3;
+					if (Settings.soundEnabled) {
+						Assets.click.play(1);
+					}
+				}
+				if (inBounds(event, 100, g.getHeight()/2-40, 40, 40)) { // T4 button
+					t2 = false; t3 = false; t4 = true; t5 = false;
+					t = 4;
+					if (Settings.soundEnabled) {
+						Assets.click.play(1);
+					}
+				}
+				if (inBounds(event, 150, g.getHeight()/2-40, 40, 40)) { // T5 button
+					t2 = false; t3 = false; t4 = false; t5 = true;
+					t = 5;
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
@@ -53,6 +93,22 @@ public class MultiPlayerScreen extends Screen {
 		g.drawPixmap(Assets.serverclient, 0, 0, 0, 0, 120, 48); // Server button image
 		g.drawPixmap(Assets.serverclient, 200, 0, 0, 48, 120, 48); // Client button image
 		g.drawPixmap(Assets.serverclient, 200, 416, 0, 96, 120, 48); // Back button image
+		
+		// T2 button image
+		if(t2) g.drawPixmap(Assets.T2b, 0, g.getHeight()/2-40, 0, 0, 40, 40);
+		else g.drawPixmap(Assets.T2w, 0, g.getHeight()/2-40, 0, 0, 40, 40);
+		
+		// T3 button image
+		if(t3) g.drawPixmap(Assets.T3b, 50, g.getHeight()/2-40, 0, 0, 40, 40);
+		else g.drawPixmap(Assets.T3w, 50, g.getHeight()/2-40, 0, 0, 40, 40);
+				
+		// T4 button image
+		if(t4) g.drawPixmap(Assets.T4b, 100, g.getHeight()/2-40, 0, 0, 40, 40);
+		else g.drawPixmap(Assets.T4w, 100, g.getHeight()/2-40, 0, 0, 40, 40);
+		
+		// T5 button image
+		if(t5) g.drawPixmap(Assets.T5b, 150, g.getHeight()/2-40, 0, 0, 40, 40);
+		else g.drawPixmap(Assets.T5w, 150, g.getHeight()/2-40, 0, 0, 40, 40);
 	}
 
 	@Override

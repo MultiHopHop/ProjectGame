@@ -28,6 +28,14 @@ public class Assets {
     public static Pixmap client;
     public static Pixmap numberpad;
     public static Pixmap stunned;
+    public static Pixmap T2w;
+    public static Pixmap T3w;
+    public static Pixmap T4w;
+    public static Pixmap T5w;
+    public static Pixmap T2b;
+    public static Pixmap T3b;
+    public static Pixmap T4b;
+    public static Pixmap T5b;
     
     public static Sound click;
     public static Sound eat;

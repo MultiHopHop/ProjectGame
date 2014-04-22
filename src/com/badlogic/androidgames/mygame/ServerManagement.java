@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.androidgame.authentication.T2ServerAuthentication;
+import com.badlogic.androidgame.authentication.T3ServerAuthentication;
+import com.badlogic.androidgame.authentication.T4ServerAuthentication;
 
 import android.util.Log;
 
@@ -31,6 +33,7 @@ public class ServerManagement {
 	private  BufferedReader reader;
 	public List<Socket> sockets;
 	public static int counter;
+	private int authenticationType = 2; // 2-5
 
 	public ServerManagement() {
 		try {
@@ -57,16 +60,37 @@ public class ServerManagement {
 		return false;
 	}
 
-	public void initializeAuthenticate() {
+	public boolean initializeAuthenticate(int t) {
+		this.authenticationType = t;
+		boolean ans = false;
 		for (Socket socket: sockets) {
-			T2ServerAuthentication serverAuth = new T2ServerAuthentication(socket, "Hello, I am server");
 			try {
-				serverAuth.t2Authentication();
+				switch(authenticationType){
+					case 2:
+						T2ServerAuthentication serverAuth2 = new T2ServerAuthentication(socket, "HelloWorld");
+						ans = serverAuth2.t2Authentication();
+						break;
+					case 3:
+						T3ServerAuthentication serverAuth3 = new T3ServerAuthentication(socket, "HelloWorld");
+						ans = serverAuth3.t3Authentication();
+						break;
+					case 4:
+						T4ServerAuthentication serverAuth4 = new T4ServerAuthentication(socket, "HelloWorld");
+						ans = serverAuth4.t4Authentication();
+						break;
+					case 5:
+						ans = false;
+						break;
+						/*T5ServerAuthentication clientAuth5 = new T5ServerAuthentication(socket, "HelloWorld");
+						return serverAuth5.t5Authentication();*/
+					
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		return ans;
 	}
 	
 	/**
