@@ -10,15 +10,17 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.badlogic.androidgame.authentication.T2ClientAuthentication;
-
 import android.util.Log;
+
+import com.badlogic.androidgame.authentication.Authentication;
+import com.badlogic.androidgame.authentication.T2ClientAuthentication;
+import com.badlogic.androidgame.authentication.T5ClientAuthentication;
 
 /**
  * This class handles client-side connection
  * 
  * @author zianli
- *
+ * 
  */
 public class ClientManagement {
 
@@ -26,21 +28,22 @@ public class ClientManagement {
 	private final String SERVER_IP;
 	private InetAddress serverAddr;
 	private Socket socket;
-	private  BufferedReader reader;
-	private  PrintWriter writer;
+	private BufferedReader reader;
+	private PrintWriter writer;
 	public int clientIndex = 0; // default
 	int authenticationType = 2; // 2-5
+	public Authentication clientAuthentication;
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
-		
+
 		try {
 			this.serverAddr = InetAddress.getByName(SERVER_IP);
 			this.socket = new Socket(serverAddr, SERVERPORT);
-			this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.reader = new BufferedReader(new InputStreamReader(
+					socket.getInputStream()));
 			this.writer = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(socket.getOutputStream())),
-					true);
+					new OutputStreamWriter(socket.getOutputStream())), true);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,25 +51,31 @@ public class ClientManagement {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
-	
-	public void initializeAuthenticate() {
-		if (authenticationType == 2) {
-			T2ClientAuthentication clientAuth = new T2ClientAuthentication(socket, "HelloWorld");
-			try {
-				clientAuth.t2Authentication();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+	public boolean initializeAuthentication() {
+		switch (authenticationType) {
+		case 2:
+			clientAuthentication = new T2ClientAuthentication(socket,
+					"HelloWorld");
+			break;
+		case 5:
+			clientAuthentication = new T5ClientAuthentication(socket);
+			break;
 		}
-		
-//		else if ()
-		
+
+		boolean authenticate = false;
+		try {
+			authenticate = clientAuthentication.initialize();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return authenticate;
 	}
-	
-	public String read(){
+
+	public String read() {
 		StringBuilder builder = new StringBuilder();
 		try {
 			do {
@@ -80,7 +89,7 @@ public class ClientManagement {
 		Log.d("ClientRead", output);
 		return output;
 	}
-	
+
 	public boolean ready() {
 		boolean output = false;
 		try {
@@ -91,8 +100,8 @@ public class ClientManagement {
 		}
 		return output;
 	}
-	
-	public void write(String msg){
+
+	public void write(String msg) {
 		writer.println(msg);
 		writer.flush();
 	}

@@ -11,26 +11,31 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.androidgame.authentication.Authentication;
+import com.badlogic.androidgame.authentication.T2ClientAuthentication;
 import com.badlogic.androidgame.authentication.T2ServerAuthentication;
+import com.badlogic.androidgame.authentication.T5ClientAuthentication;
+import com.badlogic.androidgame.authentication.T5ServerAuthentication;
 
 import android.util.Log;
 
 /**
  * This class stores all the client sockets
  * 
- * Methods:
- * write, singleWrite, read, ready, close
+ * Methods: write, singleWrite, read, ready, close
  * 
  * @author zianli
- *
+ * 
  */
 public class ServerManagement {
 	private ServerSocket serverSocket;
 	public static final int SERVERPORT = 6000;
 	private PrintWriter writer;
-	private  BufferedReader reader;
+	private BufferedReader reader;
 	public List<Socket> sockets;
 	public static int counter;
+	private int authenticationType = 2;
+	public Authentication serverAuthentication;
 
 	public ServerManagement() {
 		try {
@@ -46,7 +51,7 @@ public class ServerManagement {
 	public boolean accept() {
 		try {
 			Socket socket = serverSocket.accept();
-			counter ++;
+			counter++;
 			sockets.add(socket);
 			Log.d("ServerAccept", String.valueOf(sockets.size()));
 			return true;
@@ -57,20 +62,35 @@ public class ServerManagement {
 		return false;
 	}
 
-	public void initializeAuthenticate() {
-		for (Socket socket: sockets) {
-			T2ServerAuthentication serverAuth = new T2ServerAuthentication(socket, "Hello, I am server");
-			try {
-				serverAuth.t2Authentication();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	public boolean initializeAuthentication() {
+		boolean authenticate = false;
+		Socket socket = sockets.get(sockets.size() - 1);
+		switch (authenticationType) {
+		case 2:
+			serverAuthentication = new T2ServerAuthentication(socket, "Hither");
+			break;
+		case 5:
+			serverAuthentication = new T5ServerAuthentication(socket);
+			break;
 		}
+
+		try {
+			System.out.println("before intialize");
+
+			authenticate = serverAuthentication.initialize();
+			System.out.println("after intialize");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return authenticate;
+
 	}
-	
+
 	/**
 	 * This method writes to all clients
+	 * 
 	 * @param msg
 	 */
 	public void write(String msg) {
@@ -81,9 +101,9 @@ public class ServerManagement {
 			try {
 				writer = new PrintWriter(new BufferedWriter(
 						new OutputStreamWriter(socket.getOutputStream())), true);
-				writer.println(msg);		
+				writer.println(msg);
 				writer.flush();
-//				writer.close();
+				// writer.close();
 				Log.d("ServerWrite", msg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -91,19 +111,20 @@ public class ServerManagement {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method sends message to a particular client
+	 * 
 	 * @param msg
 	 * @param index
 	 */
 	public void singleWrite(String msg, int index) {
 		try {
-			writer = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(sockets.get(index).getOutputStream())), true);
+			writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+					sockets.get(index).getOutputStream())), true);
 			writer.println(msg);
 			writer.flush();
-//			writer.close();
+			// writer.close();
 			Log.d("SingleServerWrite", msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -113,28 +134,30 @@ public class ServerManagement {
 
 	/**
 	 * This method can handle latest messages from all its clients.
+	 * 
 	 * @return a string of all messages (separated by lines)
 	 */
-	public String read(){		
+	public String read() {
 		Log.d("ServerRead", "initialize");
 		StringBuilder builder = new StringBuilder();
 		String input = "";
 		if (sockets.isEmpty()) {
 			return null;
 		}
-		for (Socket socket: sockets) {
+		for (Socket socket : sockets) {
 			try {
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				reader = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
 				while (reader.ready()) {
 					input = reader.readLine();
 				}
 				Log.d("ServerRead", "reader.checkReady");
 				if (!input.equals("")) {
-					Log.d("ServerRead", "input: "+input);
+					Log.d("ServerRead", "input: " + input);
 					builder.append(input);
 				}
 				input = "";
-//				reader.close();
+				// reader.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -143,16 +166,18 @@ public class ServerManagement {
 		Log.d("ServerRead", "builder: " + builder.toString());
 		return builder.toString();
 	}
-	
+
 	/**
 	 * This method check if there is any message from clients.
+	 * 
 	 * @return
 	 */
 	public boolean ready() {
 		boolean ready = false;
-		for (Socket socket: sockets) {
+		for (Socket socket : sockets) {
 			try {
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				reader = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
 				if (reader.ready()) {
 					ready = true;
 					break;
@@ -160,7 +185,7 @@ public class ServerManagement {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}			
+			}
 		}
 		return ready;
 	}

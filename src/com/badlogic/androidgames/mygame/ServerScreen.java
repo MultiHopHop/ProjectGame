@@ -172,9 +172,15 @@ public class ServerScreen extends Screen {
 			if(accepted) {
 				System.out.println("client accpeted");
 				connected = true;
+			} else {
+				Log.d("ServerAccept", "Fail to accept");
 			}
 			
-			sm.initializeAuthenticate();
+			if (sm.initializeAuthentication()) {
+				numPlayers++;
+				sm.singleWrite(String.valueOf(numPlayers - 1), numPlayers - 2);
+				Log.d("ServerAccept", "Send to " + (numPlayers - 2));
+			}
 			
 			/*CommunicationThread commThread = new CommunicationThread();
 			new Thread(commThread).start();*/

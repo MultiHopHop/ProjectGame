@@ -18,7 +18,7 @@ import javax.crypto.Cipher;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
-public class T5ClientAuthentication {
+public class T5ClientAuthentication implements Authentication {
 
 	private final int RSAKeySize = 512;
 	private PublicKey pubKey = null;
@@ -31,7 +31,7 @@ public class T5ClientAuthentication {
 	}
 
 	@SuppressLint("TrulyRandom")
-	public void initialize() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -64,10 +64,12 @@ public class T5ClientAuthentication {
 		serverPubKey = kf.generatePublic(ks);
 		System.out.println("serverPubKey: "
 				+ Arrays.toString(serverPubKey.getEncoded()));
+		
+		return true;
 
 	}
 
-	public void send(String msg) throws Exception {
+	public void safeWrite(String msg) throws Exception {
 		byte[] plaintext = msg.getBytes("UTF8");
 		System.out.println("Start Encryption for plainText");
 		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -87,7 +89,7 @@ public class T5ClientAuthentication {
 		obOut.flush();
 	}
 
-	public String receive() throws Exception {
+	public String safeRead() throws Exception {
 		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
 		Object msg = obIn.readObject();
 
