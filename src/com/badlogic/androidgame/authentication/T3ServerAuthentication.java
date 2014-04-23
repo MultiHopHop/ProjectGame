@@ -20,7 +20,7 @@ import javax.crypto.SecretKey;
 
 import android.util.Base64;
 
-public class T3ServerAuthentication {
+public class T3ServerAuthentication implements Authentication {
 
 	private Socket client;
 	private final String serverPassword;
@@ -37,7 +37,7 @@ public class T3ServerAuthentication {
 		this.serverPassword = password;
 	}
 
-	public boolean t3Authentication() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -171,6 +171,7 @@ public class T3ServerAuthentication {
 		//Part 9.3 Send Encrypt Symmetric Key
 		obOut.writeObject(encryptedKey);
 		obOut.flush();
+		System.out.println("Sent encryptedKey");
         
 
 		return true;
@@ -178,5 +179,15 @@ public class T3ServerAuthentication {
 	
 	public String getClientPassword() {
 		return clientPassword;
+	}
+
+	public void send(String msg) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String receive() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

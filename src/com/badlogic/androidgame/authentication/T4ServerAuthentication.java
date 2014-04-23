@@ -20,7 +20,7 @@ import javax.crypto.SecretKey;
 
 import android.util.Base64;
 
-public class T4ServerAuthentication {
+public class T4ServerAuthentication implements Authentication {
 
 	private Socket client;
 	private final String serverPassword;
@@ -37,7 +37,7 @@ public class T4ServerAuthentication {
 		this.serverPassword = password;
 	}
 
-	public boolean t4Authentication() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -88,6 +88,7 @@ public class T4ServerAuthentication {
 		String encryptedDigest = obIn.readObject().toString();
 		byte[] decoDigest = Base64.decode(encryptedDigest,Base64.DEFAULT);
 		System.out.println("Received Digest from Client");
+		System.out.println("decoDigest:\n" + Arrays.toString(decoDigest));
 
 		// Part 5.1: encrypt passwordG + nonceP by clientPubKey
 		String modifiedText = serverPassword + "&" + Arrays.toString(nonceP);
@@ -124,7 +125,8 @@ public class T4ServerAuthentication {
 		MessageDigest digester = MessageDigest.getInstance("MD5");
 		digester.update(decoCipherText);
 		byte[] digest = digester.digest();
-		if(!digest.equals(decoDigest)){
+		System.out.println("Digest:\n" + Arrays.toString(digest));
+		if(!Arrays.equals(digest, decoDigest)){
 			System.out.println("digests do not match");
 			return false;
 		}
@@ -177,6 +179,7 @@ public class T4ServerAuthentication {
 		//Part 9.3 Send Encrypt Symmetric Key
 		obOut.writeObject(encryptedKey);
 		obOut.flush();
+		System.out.println("Sent encryptedKey");
         
 
 		return true;
@@ -184,5 +187,15 @@ public class T4ServerAuthentication {
 	
 	public String getClientPassword() {
 		return clientPassword;
+	}
+
+	public void send(String msg) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String receive() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

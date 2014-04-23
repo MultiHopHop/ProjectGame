@@ -13,6 +13,9 @@ import java.net.UnknownHostException;
 import android.util.Log;
 
 import com.badlogic.androidgame.authentication.Authentication;
+import com.badlogic.androidgame.authentication.T2ClientAuthentication;
+import com.badlogic.androidgame.authentication.T3ClientAuthentication;
+import com.badlogic.androidgame.authentication.T4ClientAuthentication;
 import com.badlogic.androidgame.authentication.T5ClientAuthentication;
 
 /**
@@ -57,21 +60,18 @@ public class ClientManagement {
 		this.authenticationType = t;
 		try {
 			switch(authenticationType){
+				case 2:
+					authentication = new T2ClientAuthentication(socket, "HelloWorld");;
+					return authentication.initialize();
+				case 3:
+					authentication = new T3ClientAuthentication(socket, "HelloWorld");
+					return authentication.initialize();
+				case 4:
+					authentication = new T4ClientAuthentication(socket, "HelloWorld");
+					return authentication.initialize();
 				case 5:
 					authentication = new T5ClientAuthentication(socket);
 					return authentication.initialize();
-//					T2ClientAuthentication clientAuth2 = new T2ClientAuthentication(socket, "HelloWorld");
-//					return clientAuth2.t2Authentication();
-//				case 3:
-//					T3ClientAuthentication clientAuth3 = new T3ClientAuthentication(socket, "HelloWorld");
-//					return clientAuth3.t3Authentication();
-//				case 4:
-//					T4ClientAuthentication clientAuth4 = new T4ClientAuthentication(socket, "HelloWorld");
-//					return clientAuth4.t4Authentication();
-//				case 5:
-//					return false;
-					/*T5ClientAuthentication clientAuth5 = new T5ClientAuthentication(socket, "HelloWorld");
-					return clientAuth5.t5Authentication();*/
 				
 			}
 		} catch (Exception e) {

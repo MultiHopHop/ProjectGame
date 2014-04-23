@@ -14,6 +14,9 @@ import java.util.List;
 import android.util.Log;
 
 import com.badlogic.androidgame.authentication.Authentication;
+import com.badlogic.androidgame.authentication.T2ServerAuthentication;
+import com.badlogic.androidgame.authentication.T3ServerAuthentication;
+import com.badlogic.androidgame.authentication.T4ServerAuthentication;
 import com.badlogic.androidgame.authentication.T5ServerAuthentication;
 
 /**
@@ -66,27 +69,22 @@ public class ServerManagement {
 		for (Socket socket: sockets) {
 			try {
 				switch(authenticationType){
+					case 2:
+						authentication = new T2ServerAuthentication(socket, "HelloWorld");
+						break;
+					case 3:
+						authentication = new T3ServerAuthentication(socket, "HelloWorld");
+						break;
+					case 4:
+						authentication = new T4ServerAuthentication(socket, "HelloWorld");
+						break;
 					case 5:
 						authentication = new T5ServerAuthentication(socket);
-						ans = authentication.initialize();
-//						T2ServerAuthentication serverAuth2 = new T2ServerAuthentication(socket, "HelloWorld");
-//						ans = serverAuth2.t2Authentication();
 						break;
-//					case 3:
-//						T3ServerAuthentication serverAuth3 = new T3ServerAuthentication(socket, "HelloWorld");
-//						ans = serverAuth3.t3Authentication();
-//						break;
-//					case 4:
-//						T4ServerAuthentication serverAuth4 = new T4ServerAuthentication(socket, "HelloWorld");
-//						ans = serverAuth4.t4Authentication();
-//						break;
-//					case 5:
-//						ans = false;
-//						break;
-						/*T5ServerAuthentication clientAuth5 = new T5ServerAuthentication(socket, "HelloWorld");
-						return serverAuth5.t5Authentication();*/
 					
 				}
+				
+				ans = authentication.initialize();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

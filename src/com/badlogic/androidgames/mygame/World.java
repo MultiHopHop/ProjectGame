@@ -190,7 +190,7 @@ public class World {
 	
 	public void speedup(final int playerIndex){
 		players.get(playerIndex).step = 2;
-		playerPowerUpTime.set(playerIndex, 6);
+		playerPowerUpTime.set(playerIndex, 5);
 		
 		
 	}
@@ -201,7 +201,7 @@ public class World {
 				players.get(i).step = 0;
 				players.get(i).stunned = true;
 				players.get(i).stunnedsound = true;
-				playerPowerUpTime.set(i, 5);
+				playerPowerUpTime.set(i, 3);
 			}
 		}
 		

@@ -21,7 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
-public class T3ClientAuthentication {
+public class T3ClientAuthentication implements Authentication {
 
 	private final String clientPassword;
 	private final int RSAKeySize = 512;
@@ -39,7 +39,7 @@ public class T3ClientAuthentication {
 	}
 
 	@SuppressLint("TrulyRandom")
-	public boolean t3Authentication() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1.1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -154,7 +154,7 @@ public class T3ClientAuthentication {
 		byte[] decoKey = Base64.decode(encryptedKey,Base64.DEFAULT);
 		System.out.println("Start decryption");
 		byte[] symKeyBytes = cipher2.doFinal(decoKey);
-		symKey = new SecretKeySpec(symKeyBytes,0,len, "DES");  // why is it len?
+		symKey = new SecretKeySpec(symKeyBytes,0,symKeyBytes.length, "DES");
 		System.out.println("Finish decryption of DES key");
 		
 		
@@ -163,6 +163,16 @@ public class T3ClientAuthentication {
 	
 	public String getServerPassword() {
 		return serverPassword;
+	}
+
+	public void send(String msg) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String receive() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
