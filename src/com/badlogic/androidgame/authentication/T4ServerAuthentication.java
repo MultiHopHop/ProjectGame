@@ -190,12 +190,43 @@ public class T4ServerAuthentication implements Authentication {
 	}
 
 	public void send(String msg) throws Exception {
-		// TODO Auto-generated method stub
+		/// get a DES cipher and print the provider
+        Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+        System.out.println("\n" + cipher.getProvider().getInfo());
+
+        // encrypt using the key and the plaintext
+        System.out.println("\nStart encrypting text");
+        cipher.init(Cipher.ENCRYPT_MODE, symkey);
+        byte[] cipherText = cipher.doFinal(msg.getBytes("UTF8"));
+        System.out.println("Finish encrypting text: ");
+        System.out.println(new String(cipherText, "UTF8"));
+        System.out.println(cipherText.length);
+
+        /***** BASE64 Encode ****/
+        String encryptedText = Base64.encodeToString(cipherText,Base64.DEFAULT);
+        System.out.println("Base64 Encoded:\n" + encryptedText);
+        ObjectOutputStream obOut = new ObjectOutputStream(
+        		client.getOutputStream());
+		obOut.writeObject(encryptedText);
+		obOut.flush();
+		System.out.println("encryptedText sent.");
 		
 	}
 
 	public String receive() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ObjectInputStream obIn = new ObjectInputStream(client.getInputStream());
+		Object msg = obIn.readObject();
+		System.out.println("Message received: "+ msg.toString());
+
+		byte[] newPlainText = null;
+		byte[] deco = Base64.decode(msg.toString(),Base64.DEFAULT);
+		System.out.println("Start decrypting msg");
+		Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+		cipher.init(Cipher.DECRYPT_MODE, symkey);
+		newPlainText = cipher.doFinal(deco);
+		
+		String output = new String(newPlainText, "UTF8");
+		System.out.println("Decrypted Text: "+ output);
+		return output;
 	}
 }

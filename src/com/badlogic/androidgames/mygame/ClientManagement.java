@@ -83,7 +83,7 @@ public class ClientManagement {
 	}
 	
 	public String read(){
-		if (authenticationType == 5) {
+		if (authenticationType != 2) {
 			try {
 				return authentication.receive();
 			} catch (Exception e) {
@@ -118,7 +118,7 @@ public class ClientManagement {
 	}
 	
 	public void write(String msg){
-		if (authenticationType == 5) {
+		if (authenticationType != 2) {
 			try {
 				authentication.send(msg);
 			} catch (Exception e) {
