@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.badlogic.androidgames.mygame"
+    package="com.zian.scott.mygame"
     android:versionCode="1"
     android:versionName="1.0" 
     android:installLocation="preferExternal">
@@ -18,7 +18,7 @@
         android:label="MultiHopHop"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.badlogic.androidgames.mygame.MyGame"
+            android:name="com.zian.scott.mygame.MyGame"
             android:label="MultiHopHop" 
             android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation">
