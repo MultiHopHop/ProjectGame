@@ -284,11 +284,8 @@ public class GameScreenClient extends Screen {
 		// record high score
 		if (world.players.size() > 1) {
 			for (int i = 0; i < 5; i++) {
-				if (gridCount[1] > Settings.highscores[i]) {
-					if (i < 4) {
-						Settings.highscores[i + 1] = Settings.highscores[i];
-					}
-					Settings.highscores[i] = gridCount[1];
+				if (gridCount[1] > Settings.highscores[i]) {					
+					Settings.addScore(gridCount[1]);
 				}
 			}
 		}
