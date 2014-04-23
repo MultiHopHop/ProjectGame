@@ -1,7 +1,12 @@
 package com.badlogic.androidgame.authentication;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.security.KeyFactory;
@@ -18,9 +23,9 @@ import javax.crypto.Cipher;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
-public class T5ServerAuthentication {
+public class T5ServerAuthentication implements Authentication {
 
-	private final int RSAKeySize = 512;
+	private final int RSAKeySize = 256;
 	private PublicKey pubKey = null;
 	private PrivateKey priKey = null;
 	private PublicKey clientPubKey = null;
@@ -31,7 +36,7 @@ public class T5ServerAuthentication {
 	}
 
 	@SuppressLint("TrulyRandom")
-	public void initialize() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -65,11 +70,12 @@ public class T5ServerAuthentication {
 		System.out.println("clientPubKey: "
 				+ Arrays.toString(clientPubKey.getEncoded()));
 
+		return true;
 	}
 
 	public void send(String msg) throws Exception {
 		byte[] plaintext = msg.getBytes("UTF8");
-		System.out.println("Start Encryption for plainText");
+		System.out.println("Start Encryption for plainText:" + msg);
 		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, clientPubKey);
 		byte[] cipherText = cipher.doFinal(plaintext);
@@ -81,16 +87,25 @@ public class T5ServerAuthentication {
 		System.out.println("EncrytpedText: " + encryptedText);
 
 		// send encryptedText to server
-		ObjectOutputStream obOut = new ObjectOutputStream(
-				socket.getOutputStream());
-		obOut.writeObject(encryptedText);
-		obOut.flush();
+		PrintWriter writer = new PrintWriter(new BufferedWriter(
+				new OutputStreamWriter(socket.getOutputStream())),
+				true);
+		writer.println(encryptedText);
+		writer.flush();
+//		ObjectOutputStream obOut = new ObjectOutputStream(
+//				socket.getOutputStream());
+//		obOut.writeObject(encryptedText);
+//		obOut.flush();
 	}
 
 	public String receive() throws Exception {
-		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
-		Object msg = obIn.readObject();
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		String msg = reader.readLine();
+//		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
+//		Object msg = obIn.readObject();
 
+		
 		byte[] deco = Base64.decode(msg.toString(), Base64.DEFAULT);
 		System.out.println("Base64 Decoded:\n" + new String(deco, "UTF8"));
 
@@ -100,6 +115,7 @@ public class T5ServerAuthentication {
 		byte[] newPlainText = cipher.doFinal(deco);
 
 		String output = new String(newPlainText, "UTF8");
+		System.out.println("ReadMessage: "+output);
 		return output;
 	}
 

@@ -17,7 +17,7 @@ import javax.crypto.Cipher;
 
 import android.util.Base64;
 
-public class T2ServerAuthentication {
+public class T2ServerAuthentication implements Authentication {
 
 	private Socket client;
 	private final String serverPassword;
@@ -33,7 +33,7 @@ public class T2ServerAuthentication {
 		this.serverPassword = password;
 	}
 
-	public boolean t2Authentication() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -150,5 +150,15 @@ public class T2ServerAuthentication {
 	
 	public String getClientPassword() {
 		return clientPassword;
+	}
+
+	public void send(String msg) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String receive() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

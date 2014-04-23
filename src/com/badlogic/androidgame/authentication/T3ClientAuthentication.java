@@ -154,7 +154,7 @@ public class T3ClientAuthentication {
 		byte[] decoKey = Base64.decode(encryptedKey,Base64.DEFAULT);
 		System.out.println("Start decryption");
 		byte[] symKeyBytes = cipher2.doFinal(decoKey);
-		symKey = new SecretKeySpec(symKeyBytes,0,len, "DES");
+		symKey = new SecretKeySpec(symKeyBytes,0,len, "DES");  // why is it len?
 		System.out.println("Finish decryption of DES key");
 		
 		

@@ -18,7 +18,7 @@ import javax.crypto.Cipher;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
-public class T2ClientAuthentication {
+public class T2ClientAuthentication implements Authentication {
 
 	private final String clientPassword;
 	private final int RSAKeySize = 512;
@@ -35,7 +35,7 @@ public class T2ClientAuthentication {
 	}
 
 	@SuppressLint("TrulyRandom")
-	public boolean t2Authentication() throws Exception {
+	public boolean initialize() throws Exception {
 		// part 1.1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -150,6 +150,16 @@ public class T2ClientAuthentication {
 	
 	public String getServerPassword() {
 		return serverPassword;
+	}
+
+	public void send(String msg) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String receive() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

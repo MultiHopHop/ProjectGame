@@ -192,7 +192,9 @@ public class ClientScreen extends Screen {
 			cm = new ClientManagement(SERVER_IP);
 			Log.d("ClientRequest", "request");
 			
-			authenticated = cm.initializeAuthenticate(t);
+			if (!(authenticated = cm.initializeAuthenticate(t))) {
+				return;
+			}
 			
 			String input;
 			input = cm.read();
@@ -206,7 +208,7 @@ public class ClientScreen extends Screen {
 			}
 
 			input = cm.read();
-			if (input.contains("startgame")) {
+			if (input.contains("start")) {
 				numPlayers = Integer.parseInt(cm.read().substring(0, 1));
 				game.setScreen(new GameScreenClient(game, cm, numPlayers));
 			}

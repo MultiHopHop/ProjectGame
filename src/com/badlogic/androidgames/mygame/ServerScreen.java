@@ -62,7 +62,7 @@ public class ServerScreen extends Screen {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					sm.write("startgame");
+					sm.write("start");
 					Log.d("ServerWrite", "gamestart");
 					sm.write(String.valueOf(numPlayers));
 					game.setScreen(new GameScreenServer(game, sm));

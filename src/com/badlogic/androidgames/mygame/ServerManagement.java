@@ -11,11 +11,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.androidgame.authentication.T2ServerAuthentication;
-import com.badlogic.androidgame.authentication.T3ServerAuthentication;
-import com.badlogic.androidgame.authentication.T4ServerAuthentication;
-
 import android.util.Log;
+
+import com.badlogic.androidgame.authentication.Authentication;
+import com.badlogic.androidgame.authentication.T5ServerAuthentication;
 
 /**
  * This class stores all the client sockets
@@ -34,6 +33,7 @@ public class ServerManagement {
 	public List<Socket> sockets;
 	public static int counter;
 	private int authenticationType = 2; // 2-5
+	private Authentication authentication;
 
 	public ServerManagement() {
 		try {
@@ -66,21 +66,23 @@ public class ServerManagement {
 		for (Socket socket: sockets) {
 			try {
 				switch(authenticationType){
-					case 2:
-						T2ServerAuthentication serverAuth2 = new T2ServerAuthentication(socket, "HelloWorld");
-						ans = serverAuth2.t2Authentication();
-						break;
-					case 3:
-						T3ServerAuthentication serverAuth3 = new T3ServerAuthentication(socket, "HelloWorld");
-						ans = serverAuth3.t3Authentication();
-						break;
-					case 4:
-						T4ServerAuthentication serverAuth4 = new T4ServerAuthentication(socket, "HelloWorld");
-						ans = serverAuth4.t4Authentication();
-						break;
 					case 5:
-						ans = false;
+						authentication = new T5ServerAuthentication(socket);
+						ans = authentication.initialize();
+//						T2ServerAuthentication serverAuth2 = new T2ServerAuthentication(socket, "HelloWorld");
+//						ans = serverAuth2.t2Authentication();
 						break;
+//					case 3:
+//						T3ServerAuthentication serverAuth3 = new T3ServerAuthentication(socket, "HelloWorld");
+//						ans = serverAuth3.t3Authentication();
+//						break;
+//					case 4:
+//						T4ServerAuthentication serverAuth4 = new T4ServerAuthentication(socket, "HelloWorld");
+//						ans = serverAuth4.t4Authentication();
+//						break;
+//					case 5:
+//						ans = false;
+//						break;
 						/*T5ServerAuthentication clientAuth5 = new T5ServerAuthentication(socket, "HelloWorld");
 						return serverAuth5.t5Authentication();*/
 					
@@ -101,8 +103,20 @@ public class ServerManagement {
 		if (sockets.isEmpty()) {
 			return;
 		}
+		
+		if (authenticationType == 5) {
+			try {
+				authentication.send(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
 		for (Socket socket : sockets) {
 			try {
+				
 				writer = new PrintWriter(new BufferedWriter(
 						new OutputStreamWriter(socket.getOutputStream())), true);
 				writer.println(msg);		
@@ -122,6 +136,16 @@ public class ServerManagement {
 	 * @param index
 	 */
 	public void singleWrite(String msg, int index) {
+		if (authenticationType == 5) {
+			try {
+				authentication.send(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
 		try {
 			writer = new PrintWriter(new BufferedWriter(
 					new OutputStreamWriter(sockets.get(index).getOutputStream())), true);
@@ -146,6 +170,16 @@ public class ServerManagement {
 		if (sockets.isEmpty()) {
 			return null;
 		}
+		
+		if (authenticationType == 5) {
+			try {
+				return authentication.receive();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		for (Socket socket: sockets) {
 			try {
 				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
