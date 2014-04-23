@@ -1,10 +1,7 @@
 package com.badlogic.androidgame.authentication;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.security.KeyFactory;
@@ -23,7 +20,7 @@ import android.util.Base64;
 
 public class T5ClientAuthentication implements Authentication {
 
-	private final int RSAKeySize = 256;
+	private final int RSAKeySize = 1024;
 	private PublicKey pubKey = null;
 	private PrivateKey priKey = null;
 	private PublicKey serverPubKey = null;
@@ -85,24 +82,24 @@ public class T5ClientAuthentication implements Authentication {
 		System.out.println("EncrytpedText: " + encryptedText);
 
 		// send encryptedText to server
-		PrintWriter writer = new PrintWriter(new BufferedWriter(
-				new OutputStreamWriter(socket.getOutputStream())),
-				true);
-		writer.println(encryptedText);
-		writer.flush();
-//		ObjectOutputStream obOut = new ObjectOutputStream(
-//				socket.getOutputStream());
-//		obOut.writeObject(encryptedText);
-//		obOut.flush();
+//		PrintWriter writer = new PrintWriter(new BufferedWriter(
+//				new OutputStreamWriter(socket.getOutputStream())),
+//				true);
+//		writer.println(encryptedText);
+//		writer.flush();
+		ObjectOutputStream obOut = new ObjectOutputStream(
+				socket.getOutputStream());
+		obOut.writeObject(encryptedText);
+		obOut.flush();
 	}
 
 	public String receive() throws Exception {
 		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		String msg = reader.readLine();
-		
-//		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
-//		Object msg = obIn.readObject();
+//		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//		String msg = reader.readLine();
+		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
+		Object msg = obIn.readObject();
+		System.out.println("Message received: "+ msg.toString());
 
 		byte[] deco = Base64.decode(msg.toString(), Base64.DEFAULT);
 		System.out.println("Base64 Decoded:\n" + new String(deco, "UTF8"));
