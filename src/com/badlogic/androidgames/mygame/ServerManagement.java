@@ -102,7 +102,7 @@ public class ServerManagement {
 			return;
 		}
 		
-		if (authenticationType == 5) {
+		if (authenticationType != 2) {
 			try {
 				authentication.send(msg);
 			} catch (Exception e) {
@@ -134,7 +134,7 @@ public class ServerManagement {
 	 * @param index
 	 */
 	public void singleWrite(String msg, int index) {
-		if (authenticationType == 5) {
+		if (authenticationType != 2) {
 			try {
 				authentication.send(msg);
 			} catch (Exception e) {
@@ -169,7 +169,7 @@ public class ServerManagement {
 			return null;
 		}
 		
-		if (authenticationType == 5) {
+		if (authenticationType != 2) {
 			try {
 				return authentication.receive();
 			} catch (Exception e) {

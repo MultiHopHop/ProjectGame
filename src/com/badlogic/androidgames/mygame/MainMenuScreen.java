@@ -67,7 +67,7 @@ public class MainMenuScreen extends Screen {
 		Graphics g = game.getGraphics();
 		
 		g.drawPixmap(Assets.background, 0, 0);
-		g.drawPixmap(Assets.logo, 32, 20);
+		g.drawPixmap(Assets.logo, 10, 20);
 		g.drawPixmap(Assets.mainMenu, 64, 220); //set of main menu buttons image
 		if (Settings.soundEnabled) {
 			g.drawPixmap(Assets.buttons, 0,  416, 0, 0, 64, 64);

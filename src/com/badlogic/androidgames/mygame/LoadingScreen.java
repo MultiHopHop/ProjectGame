@@ -48,7 +48,7 @@ public class LoadingScreen extends Screen {
 	    Assets.mochi = g.newPixmap("mochi.png", PixmapFormat.ARGB4444);
 	    Assets.winlose = g.newPixmap("winlose.png", PixmapFormat.ARGB4444);
 	    
-	    Assets.click = game.getAudio().newSound("Bounce.ogg");
+	    Assets.click = game.getAudio().newSound("bounce.ogg");
 	    Assets.click1 = game.getAudio().newSound("click.ogg");
 	    Assets.eat = game.getAudio().newSound("eat.ogg");
 	    Assets.bitten = game.getAudio().newSound("bitten.ogg");
