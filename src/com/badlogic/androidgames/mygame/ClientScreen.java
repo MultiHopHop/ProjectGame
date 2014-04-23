@@ -51,40 +51,40 @@ public class ClientScreen extends Screen {
 			}
 			if(!connected){
 				if (event.type == TouchEvent.TOUCH_DOWN) { //code for numbpad
-					if (inBounds(event, 0, 150, 52, 50)) {  // 1
+					if (inBounds(event, game.getGraphics().getWidth()/2-81, 150, 52, 50)) {  // 1
 						SERVER_IP += "1";
 					}
-					if (inBounds(event, 58, 150, 52, 50)) { // 2
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+58, 150, 52, 50)) { // 2
 						SERVER_IP += "2";
 					}
-					if (inBounds(event, 114, 150, 52, 50)) { // 3
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+114, 150, 52, 50)) { // 3
 						SERVER_IP += "3";
 					}
-					if (inBounds(event, 0, 150+58, 52, 50)) {  // 4
+					if (inBounds(event, game.getGraphics().getWidth()/2-81, 150+58, 52, 50)) {  // 4
 						SERVER_IP += "4";
 					}
-					if (inBounds(event, 58, 150+58, 52, 50)) { // 5
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+58, 150+58, 52, 50)) { // 5
 						SERVER_IP += "5";
 					}
-					if (inBounds(event, 114, 150+58, 52, 50)) { // 6
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+114, 150+58, 52, 50)) { // 6
 						SERVER_IP += "6";
 					}
-					if (inBounds(event, 0, 150+114, 52, 50)) {  // 7
+					if (inBounds(event, game.getGraphics().getWidth()/2-81, 150+114, 52, 50)) {  // 7
 						SERVER_IP += "7";
 					}
-					if (inBounds(event, 58, 150+114, 52, 50)) { // 8
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+58, 150+114, 52, 50)) { // 8
 						SERVER_IP += "8";
 					}
-					if (inBounds(event, 114, 150+114, 52, 50)) { // 9
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+114, 150+114, 52, 50)) { // 9
 						SERVER_IP += "9";
 					}
-					if (inBounds(event, 0, 150+170, 52, 50)) {  // .
+					if (inBounds(event, game.getGraphics().getWidth()/2-81, 150+170, 52, 50)) {  // .
 						SERVER_IP += ".";
 					}
-					if (inBounds(event, 58, 150+170, 52, 50)) { // 0
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+58, 150+170, 52, 50)) { // 0
 						SERVER_IP += "0";
 					}
-					if (inBounds(event, 114, 150+170, 52, 50)) { // backspace
+					if (inBounds(event, game.getGraphics().getWidth()/2-81+114, 150+170, 52, 50)) { // backspace
 						if(SERVER_IP != null)
 							if(SERVER_IP.length() > 0)
 								SERVER_IP = SERVER_IP.substring(0, SERVER_IP.length()-1);
@@ -101,10 +101,10 @@ public class ClientScreen extends Screen {
 		g.drawPixmap(Assets.serverclient, g.getWidth()/2 -60, 0, 0, 48, 120, 48); // Client image
 		g.drawPixmap(Assets.serverclient, 0, 416, 0, 96, 120, 48); // Back button image
 		g.drawPixmap(Assets.serverclient, 200, 416, 0, 192, 120, 48); // Connect button image
-		g.drawPixmap(Assets.bird, g.getWidth() - 40, 0, 0, 0, 32, 32); // bird image
+		g.drawPixmap(Assets.bird, g.getWidth() - 40, 5, 0, 0, 32, 32); // bird image
 		
 		if(!connected)
-			g.drawPixmap(Assets.numberpad, 0, 150, 0, 0, 163, 219); // numberpad image
+			g.drawPixmap(Assets.numberpad, g.getWidth()/2-81, 150, 0, 0, 163, 219); // numberpad image
 		
 		if(SERVER_IP == null);
 		else drawText(g, SERVER_IP, 0, 80); // display IP

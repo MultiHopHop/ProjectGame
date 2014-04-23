@@ -79,7 +79,7 @@ public class ServerScreen extends Screen {
 		g.drawPixmap(Assets.serverclient, g.getWidth()/2 -60, 0, 0, 0, 120, 48); // Server image
 		g.drawPixmap(Assets.serverclient, 0, 416, 0, 96, 120, 48); // Back button image
 		g.drawPixmap(Assets.serverclient, 200, 416, 0, 144, 120, 48); // Play button image
-		g.drawPixmap(Assets.mochi, g.getWidth() - 40, 0, 0, 0, 32, 32); // mochi image
+		g.drawPixmap(Assets.mochi, g.getWidth() - 40, 5, 0, 0, 32, 32); // mochi image
 		
 		String ip = getLocalIpAddress(); // get IP
 		if(ip == null) drawText(g, "123", 0, 80); // get IP failed
