@@ -1,7 +1,6 @@
 package com.badlogic.androidgames.mygame;
 
 
-
 public class PowerUp {
 	public int x, y;
 	public PowerUpType type;

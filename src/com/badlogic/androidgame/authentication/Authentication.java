@@ -4,8 +4,8 @@ public interface Authentication {
 
 	public boolean initialize() throws Exception;
 	
-	public void send(String msg) throws Exception;
+	public void safeWrite(String msg) throws Exception;
 	
-	public String receive() throws Exception;
+	public String safeRead() throws Exception;
 	
 }

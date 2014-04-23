@@ -10,7 +10,6 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Screen;
-import com.badlogic.androidgames.mygame.GameScreenServer.GameState;
 
 public class GameScreenClient extends Screen {
 	
@@ -338,12 +337,7 @@ public class GameScreenClient extends Screen {
 				default:
 					g.drawRect(i * 32, j * 32, 32, 32, Color.WHITE);
 				}
-				// if (world.board[i][j] == 0) {
-				// g.drawRect(i*32, j*32, 32, 32, Color.GRAY);
-				// }
-				// else {
-				// g.drawPixmap(Assets.tail, i*32, j*32);
-				// }
+
 			}
 		}
 

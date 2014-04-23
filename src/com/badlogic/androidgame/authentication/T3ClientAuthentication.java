@@ -4,7 +4,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -165,7 +164,7 @@ public class T3ClientAuthentication implements Authentication {
 		return serverPassword;
 	}
 
-	public void send(String msg) throws Exception {
+	public void safeWrite(String msg) throws Exception {
 		// get a DES cipher and print the provider
         Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
         System.out.println("\n" + cipher.getProvider().getInfo());
@@ -190,7 +189,7 @@ public class T3ClientAuthentication implements Authentication {
 		
 	}
 
-	public String receive() throws Exception {
+	public String safeRead() throws Exception {
 		
 		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
 		Object msg = obIn.readObject();

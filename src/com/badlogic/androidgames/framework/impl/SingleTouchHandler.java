@@ -6,8 +6,8 @@ import java.util.List;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.badlogic.androidgames.framework.Pool;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
+import com.badlogic.androidgames.framework.Pool;
 import com.badlogic.androidgames.framework.Pool.PoolObjectFactory;
 
 public class SingleTouchHandler implements TouchHandler {

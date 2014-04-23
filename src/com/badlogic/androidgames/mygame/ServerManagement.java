@@ -104,7 +104,7 @@ public class ServerManagement {
 		
 		if (authenticationType != 2) {
 			try {
-				authentication.send(msg);
+				authentication.safeWrite(msg);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -119,7 +119,6 @@ public class ServerManagement {
 						new OutputStreamWriter(socket.getOutputStream())), true);
 				writer.println(msg);		
 				writer.flush();
-//				writer.close();
 				Log.d("ServerWrite", msg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -136,7 +135,7 @@ public class ServerManagement {
 	public void singleWrite(String msg, int index) {
 		if (authenticationType != 2) {
 			try {
-				authentication.send(msg);
+				authentication.safeWrite(msg);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -162,7 +161,6 @@ public class ServerManagement {
 	 * @return a string of all messages (separated by lines)
 	 */
 	public String read(){		
-		Log.d("ServerRead", "initialize");
 		StringBuilder builder = new StringBuilder();
 		String input = "";
 		if (sockets.isEmpty()) {
@@ -171,7 +169,7 @@ public class ServerManagement {
 		
 		if (authenticationType != 2) {
 			try {
-				return authentication.receive();
+				return authentication.safeRead();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -190,7 +188,6 @@ public class ServerManagement {
 					builder.append(input);
 				}
 				input = "";
-//				reader.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

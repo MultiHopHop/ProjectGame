@@ -1,6 +1,5 @@
 package com.badlogic.androidgames.mygame;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -427,19 +426,7 @@ public class GameScreenServer extends Screen {
 			}
 		}
 
-		// Pixmap powerUpPixmap = null;
-		// if (powerUp != null) {
-		// if (powerUp.type == PowerUp.SPEEDUP) {
-		// powerUpPixmap = Assets.stain1;
-		// }
-		// if (powerUp.type == PowerUp.STUN) {
-		// powerUpPixmap = Assets.stain3;
-		// }
-		// Log.d("DrawWorldTest", "powerup");
-		// x = powerUp.x * 32;
-		// y = powerUp.y * 32;
-		// g.drawPixmap(powerUpPixmap, x, y);
-		// }
+
 		int index = 0;
 		for (Player player : players) {
 			Pixmap headPixmap;
@@ -533,13 +520,15 @@ public class GameScreenServer extends Screen {
 		}
 		drawText(g,s.substring(0, s.length()-1),g.getWidth()/2-20,150);
 		
-		int p0 = gridCount[0];
-		int p1 = gridCount[1];
-		if(p0>p1)
-			g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 0, 240, 50);
-		else
-			g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 50, 240, 50);
-			
+		if (world.players.size() > 1) {
+			int p0 = gridCount[0];
+			int p1 = gridCount[1];
+			if(p0>p1)
+				g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 0, 240, 50);
+			else
+				g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 50, 240, 50);
+		}
+				
 		g.drawPixmap(Assets.gameOver, 62, 100);
 		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);

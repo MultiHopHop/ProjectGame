@@ -152,12 +152,12 @@ public class T2ClientAuthentication implements Authentication {
 		return serverPassword;
 	}
 
-	public void send(String msg) throws Exception {
+	public void safeWrite(String msg) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public String receive() throws Exception {
+	public String safeRead() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

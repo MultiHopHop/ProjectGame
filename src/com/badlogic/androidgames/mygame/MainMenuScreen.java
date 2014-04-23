@@ -2,8 +2,6 @@ package com.badlogic.androidgames.mygame;
 
 import java.util.List;
 
-import android.content.Intent;
-
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;

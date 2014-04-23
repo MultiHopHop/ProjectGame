@@ -85,7 +85,7 @@ public class ClientManagement {
 	public String read(){
 		if (authenticationType != 2) {
 			try {
-				return authentication.receive();
+				return authentication.safeRead();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -120,7 +120,7 @@ public class ClientManagement {
 	public void write(String msg){
 		if (authenticationType != 2) {
 			try {
-				authentication.send(msg);
+				authentication.safeWrite(msg);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -40,7 +40,7 @@ public class T5ClientAuthentication implements Authentication {
 		pubKey = pair.getPublic();
 		priKey = pair.getPrivate();
 
-		// part 2 encode pubKey
+		// part 2 encode and send pubKey
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.putInt(pubKey.getEncoded().length);
 		socket.getOutputStream().write(bb.array());
@@ -68,7 +68,7 @@ public class T5ClientAuthentication implements Authentication {
 		return true;
 	}
 
-	public void send(String msg) throws Exception {
+	public void safeWrite(String msg) throws Exception {
 		byte[] plaintext = msg.getBytes("UTF8");
 		System.out.println("Start Encryption for plainText");
 		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -82,21 +82,14 @@ public class T5ClientAuthentication implements Authentication {
 		System.out.println("EncrytpedText: " + encryptedText);
 
 		// send encryptedText to server
-//		PrintWriter writer = new PrintWriter(new BufferedWriter(
-//				new OutputStreamWriter(socket.getOutputStream())),
-//				true);
-//		writer.println(encryptedText);
-//		writer.flush();
 		ObjectOutputStream obOut = new ObjectOutputStream(
 				socket.getOutputStream());
 		obOut.writeObject(encryptedText);
 		obOut.flush();
 	}
 
-	public String receive() throws Exception {
+	public String safeRead() throws Exception {
 		
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//		String msg = reader.readLine();
 		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
 		Object msg = obIn.readObject();
 		System.out.println("Message received: "+ msg.toString());

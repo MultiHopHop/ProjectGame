@@ -10,18 +10,18 @@ public class Parser {
 	// Example String input: "Player1 move up 0",
 	// "Server spawnpowerup 23 4", "Player2 move down -1"
 
-	private final int REQUEST = 0;
-	private final int DENY = -1;
-	private final int APPROVE = 1;
+//	private final int REQUEST = 0;
+//	private final int DENY = -1;
+//	private final int APPROVE = 1;
 
 	private String agent, command, argument;
 	private int flag = 10;
 
 	private String output = null;
 	private int playerIndex;
-	private List<Player> players;
+//	private List<Player> players;
 	private World world;
-	private boolean checkMove;
+//	private boolean checkMove;
 
 	public Parser (World world) {
 //		this.players = players;
@@ -57,8 +57,8 @@ public class Parser {
 				} else if (argument.equals("left")) {
 					world.players.get(playerIndex).moveLeft();
 				}
-
 			}
+			
 			else if (command.equals("activate")) {
 				if (argument.equals("SPEEDUP")) {
 					world.speedup(playerIndex);
@@ -109,7 +109,7 @@ public class Parser {
 	private void lexer(String input) {
 		Pattern patterns = Pattern.compile("((Player[0-3])|Server)|"
 				+ "(move|spawnpowerup|activate|update)|"
-				+ "(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))|" + "(-?[01])");
+				+ "(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))|");
 		Matcher matcher = patterns.matcher(input);
 		while (matcher.find()) {
 			if (matcher.group().matches("(Player[0-3])|Server")) {
@@ -119,10 +119,11 @@ public class Parser {
 			} else if (matcher.group().matches(
 					"(up|down|right|left|(SPEEDUP|STUN|BOMB)|([0-9]+ [0-9]+ (speedup|stun|bomb)))")) {
 				argument = matcher.group();
-			} else if (matcher.group().matches("-?[01]")) {
-				System.out.println("Flag: " + matcher.group());
-				flag = Integer.parseInt(matcher.group());
-			}
+			} 
+//			else if (matcher.group().matches("-?[01]")) {
+//				System.out.println("Flag: " + matcher.group());
+//				flag = Integer.parseInt(matcher.group());
+//			}
 		}
 	}
 }

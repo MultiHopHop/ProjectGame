@@ -24,7 +24,6 @@ public class World {
 
 	float tickTime = 0;
 	// tick is the interval between each move. 
-	// This part should be deleted for actual implementation
 	float tick = TICK_INITIAL;
 	float powerupCounter = 0;
 	Random random = new Random();
@@ -58,7 +57,6 @@ public class World {
 		
 		numPlayers = players.size();
 		
-//		powerUp = null;
 		powerUpList = new LinkedList<PowerUp>();
 
 		for (int i = 0; i < WORLD_WIDTH; i++) {

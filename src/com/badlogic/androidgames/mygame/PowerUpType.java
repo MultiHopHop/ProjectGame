@@ -10,11 +10,6 @@ public enum PowerUpType
 	STUN, // should force other players to halt movement for limited time
 	BOMB; // should change tiles surrounding player to his color
 	
-//	SCORE_MULTIPLIER; 
-	// should have save a multiplier that affect final scores
-	// zian: difficult to calculate scores 
-	// 		 scores would be represented more intuitively by predominance of colors in the board
-
 	/**
 	 * Returns a randomized powerup as defined in the enum list
 	 * 
