@@ -30,6 +30,7 @@ public class T5ServerAuthentication implements Authentication {
 		this.socket = socket;
 	}
 
+	// Assume the exchange of public keys is safe
 	@SuppressLint("TrulyRandom")
 	public boolean initialize() throws Exception {
 		// part 1 Generate key pair

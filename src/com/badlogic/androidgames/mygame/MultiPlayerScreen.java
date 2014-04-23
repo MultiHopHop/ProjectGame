@@ -53,7 +53,7 @@ public class MultiPlayerScreen extends Screen {
 					}
 				}
 				
-				
+				// choose authentication method: T2, T3, T4 or T5
 				if (inBounds(event, 0, g.getHeight()/2-40, 40, 40)) { // T2 button
 					t2 = true; t3 = false; t4 = false; t5 = false;
 					t = 2;

@@ -36,7 +36,7 @@ public class T2ClientAuthentication implements Authentication {
 
 	@SuppressLint("TrulyRandom")
 	public boolean initialize() throws Exception {
-		// part 1.1 Generate key pair
+		// Part 1.1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
 		RSAKeyGen.initialize(RSAKeySize, random);
@@ -49,7 +49,7 @@ public class T2ClientAuthentication implements Authentication {
 		int seedByteCount = 4;
 		nonceP = sr.generateSeed(seedByteCount);
 
-		// part 2 send pubKey
+		// Part 2 send pubKey
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.putInt(pubKey.getEncoded().length);
 		socket.getOutputStream().write(bb.array());
@@ -60,7 +60,7 @@ public class T2ClientAuthentication implements Authentication {
 		System.out.println("Sent: " + Arrays.toString(nonceP));
 		socket.getOutputStream().flush();
 
-		// part 3 receive serverPubKey and nonceG
+		// Part 3 receive serverPubKey and nonceG
 		byte[] lenb = new byte[4];
 		socket.getInputStream().read(lenb, 0, 4);
 		ByteBuffer bb1 = ByteBuffer.wrap(lenb);
@@ -81,7 +81,7 @@ public class T2ClientAuthentication implements Authentication {
 		System.out.println("NonceG: " + Arrays.toString(nonceG));
 
 		// Part 4.1 Encrypt password + nonceG by serverPubKey
-		String modifiedText = clientPassword + "&" + Arrays.toString(nonceG);
+		String modifiedText = clientPassword + "&" + Arrays.toString(nonceG); // password and nonceG joined by '&'
 		System.out.println("ModifiedText: " + modifiedText);
 		byte[] plaintext = modifiedText.getBytes("UTF8");
 		System.out.println("Start Encryption for plainText");

@@ -10,7 +10,7 @@ import com.badlogic.androidgames.framework.FileIO;
 
 public class Settings {
 	public static boolean soundEnabled = true;
-	public static int[] highscores = new int[] { 100, 80, 60, 30, 10 };
+	public static int[] highscores = new int[] { 60, 50, 40, 30, 10 };
 
 	public static void load(FileIO files) {
 		BufferedReader in = null;

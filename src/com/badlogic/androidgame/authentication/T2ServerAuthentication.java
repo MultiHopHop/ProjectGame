@@ -34,7 +34,7 @@ public class T2ServerAuthentication implements Authentication {
 	}
 
 	public boolean initialize() throws Exception {
-		// part 1 Generate key pair
+		// Part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
 		RSAKeyGen.initialize(RSAKeySize, random);
@@ -46,7 +46,7 @@ public class T2ServerAuthentication implements Authentication {
 		int seedByteCount = 4;
 		nonceG = sr.generateSeed(seedByteCount);
 
-		// part 2 Receive public and nonce from client
+		// Part 2 Receive public and nonceP from client
 		byte[] lenb = new byte[4];
 		client.getInputStream().read(lenb, 0, 4);
 		ByteBuffer bb1 = ByteBuffer.wrap(lenb);
@@ -67,7 +67,7 @@ public class T2ServerAuthentication implements Authentication {
 		client.getInputStream().read(nonceP);
 		System.out.println("NonceP: " + Arrays.toString(nonceP));
 
-		// part 3 Send serverPubKey and nonceG to client
+		// Part 3 Send serverPubKey and nonceG to client
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.putInt(pubKey.getEncoded().length);
 		client.getOutputStream().write(bb.array());

@@ -12,17 +12,17 @@ import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Screen;
 
 public class GameScreenClient extends Screen {
-	
+
 	enum GameState {
 		Ready, Running, Paused, GameOver
 	}
 
 	GameState state = GameState.Ready;
 	World world;
-	String score = "0";
+	private String score = "0";
 	private static float timer;
 	private ClientManagement cm;
-	Parser parser;
+	private Parser parser;
 	private int playerNum;
 	int gridCount[];
 
@@ -50,7 +50,7 @@ public class GameScreenClient extends Screen {
 			updateRunning(touchEvents, deltaTime);
 		if (state == GameState.Paused)
 			updatePaused(touchEvents);
-		if (state == GameState.GameOver){
+		if (state == GameState.GameOver) {
 			gridCount = countGrids();
 			updateGameOver(touchEvents);
 		}
@@ -71,8 +71,8 @@ public class GameScreenClient extends Screen {
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
-		//Log.d("gameState", "running");
-		
+		// Log.d("gameState", "running");
+
 		String tempString = "";
 
 		// handle touch input
@@ -85,126 +85,129 @@ public class GameScreenClient extends Screen {
 						Assets.click1.play(1);
 					}
 					cm.write("pause");
-					// state = GameState.Paused;
 				}
 			}
-			
+
 			// for each input, send the corresponding request to server
 			if (event.type == TouchEvent.TOUCH_DOWN) {
 				if (inBounds(event, 256, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					tempString = "Player" + cm.clientIndex + " move right";
+					tempString = "Player" + playerNum + " move right";
 				}
 				if (inBounds(event, 192, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					tempString = "Player" + cm.clientIndex + " move down";
+					tempString = "Player" + playerNum + " move down";
 				}
 				if (inBounds(event, 128, 416, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					tempString = "Player" + cm.clientIndex + " move left";
+					tempString = "Player" + playerNum + " move left";
 				}
 				if (inBounds(event, 192, 352, 64, 64)) {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					tempString = "Player" + cm.clientIndex + " move up";
+					tempString = "Player" + playerNum + " move up";
 				}
-				if (inBounds(event, 0, 352, 40, 40)) { //first power up
-					if(!world.players.get(playerNum).powerUpList.isEmpty()){
-			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
-			        	cm.write("Player" + playerNum + " activate "+list.get(0).toString());
-			        	PowerUpType p = list.get(0);
-			        	if (Settings.soundEnabled){
-			        		switch(p){
-			        			case SPEEDUP:
-			        				Assets.fastbounce.play(1);
-			        				break;
-			        			case STUN:
-			        				Assets.eat.play(2);
-			        				break;
-			        			case BOMB:
-			        				Assets.explode.play(1);
-			        				break;
-			        		}
-			        	}			        	
-			        	list.remove(0);
+				if (inBounds(event, 0, 352, 40, 40)) { // first power up
+					if (!world.players.get(playerNum).powerUpList.isEmpty()) {
+						List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+						cm.write("Player" + playerNum + " activate "
+								+ list.get(0).toString());
+						PowerUpType p = list.get(0);
+						if (Settings.soundEnabled) {
+							switch (p) {
+							case SPEEDUP:
+								Assets.fastbounce.play(1);
+								break;
+							case STUN:
+								Assets.eat.play(2);
+								break;
+							case BOMB:
+								Assets.explode.play(1);
+								break;
+							}
+						}
+						list.remove(0);
 					}
 				}
-				if (inBounds(event, 40, 352, 40, 40)) { //second power up
-					if(world.players.get(playerNum).powerUpList.size() > 1){
-			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
-			        	cm.write("Player" + playerNum + " activate "+list.get(1).toString());
-			        	PowerUpType p = list.get(1);
-			        	if (Settings.soundEnabled){
-			        		switch(p){
-				        		case SPEEDUP:
-			        				Assets.fastbounce.play(1);
-			        				break;
-			        			case STUN:
-			        				Assets.eat.play(2);
-			        				break;
-			        			case BOMB:
-			        				Assets.explode.play(1);
-			        				break;
-			        		}
-			        	}			        	
-			        	list.remove(1);
+				if (inBounds(event, 40, 352, 40, 40)) { // second power up
+					if (world.players.get(playerNum).powerUpList.size() > 1) {
+						List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+						cm.write("Player" + playerNum + " activate "
+								+ list.get(1).toString());
+						PowerUpType p = list.get(1);
+						if (Settings.soundEnabled) {
+							switch (p) {
+							case SPEEDUP:
+								Assets.fastbounce.play(1);
+								break;
+							case STUN:
+								Assets.eat.play(2);
+								break;
+							case BOMB:
+								Assets.explode.play(1);
+								break;
+							}
+						}
+						list.remove(1);
 					}
 				}
-				if (inBounds(event, 80, 352, 40, 40)) { //third power up
-					if(world.players.get(playerNum).powerUpList.size() > 2){
-			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
-			        	cm.write("Player" + playerNum + " activate "+list.get(2).toString());
-			        	PowerUpType p = list.get(2);
-			        	if (Settings.soundEnabled){
-			        		switch(p){
-				        		case SPEEDUP:
-			        				Assets.fastbounce.play(1);
-			        				break;
-			        			case STUN:
-			        				Assets.eat.play(2);
-			        				break;
-			        			case BOMB:
-			        				Assets.explode.play(1);
-			        				break;
-			        		}
-			        	}			        	
-			        	list.remove(2);
+				if (inBounds(event, 80, 352, 40, 40)) { // third power up
+					if (world.players.get(playerNum).powerUpList.size() > 2) {
+						List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+						cm.write("Player" + playerNum + " activate "
+								+ list.get(2).toString());
+						PowerUpType p = list.get(2);
+						if (Settings.soundEnabled) {
+							switch (p) {
+							case SPEEDUP:
+								Assets.fastbounce.play(1);
+								break;
+							case STUN:
+								Assets.eat.play(2);
+								break;
+							case BOMB:
+								Assets.explode.play(1);
+								break;
+							}
+						}
+						list.remove(2);
 					}
 				}
-				if (inBounds(event, 120, 352, 40, 40)) { //forth power up
-					if(world.players.get(playerNum).powerUpList.size() > 3){
-			        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
-			        	cm.write("Player" + playerNum + " activate "+list.get(3).toString());
-			        	PowerUpType p = list.get(3);
-			        	if (Settings.soundEnabled){
-			        		switch(p){
-				        		case SPEEDUP:
-			        				Assets.fastbounce.play(1);
-			        				break;
-			        			case STUN:
-			        				Assets.eat.play(2);
-			        				break;
-			        			case BOMB:
-			        				Assets.explode.play(1);
-			        				break;
-			        		}
-			        	}			        	
-			        	list.remove(3);
+				if (inBounds(event, 120, 352, 40, 40)) { // forth power up
+					if (world.players.get(playerNum).powerUpList.size() > 3) {
+						List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+						cm.write("Player" + playerNum + " activate "
+								+ list.get(3).toString());
+						PowerUpType p = list.get(3);
+						if (Settings.soundEnabled) {
+							switch (p) {
+							case SPEEDUP:
+								Assets.fastbounce.play(1);
+								break;
+							case STUN:
+								Assets.eat.play(2);
+								break;
+							case BOMB:
+								Assets.explode.play(1);
+								break;
+							}
+						}
+						list.remove(3);
 					}
 				}
 			}
 		}
-		
+
 		if (!tempString.equals("")) {
 			cm.write(tempString);
-			Log.d("ClientWrite", "start: "+tempString);
+			Log.d("ClientWrite", "start: " + tempString);
 		}
 
 		// handle request from server
@@ -232,11 +235,11 @@ public class GameScreenClient extends Screen {
 			}
 		}
 
-		//world.update(deltaTime);
-		
-		//stun sound
-		if(world.players.get(playerNum).stunnedsound){
-			if (Settings.soundEnabled){
+		// world.update(deltaTime);
+
+		// stun sound
+		if (world.players.get(playerNum).stunnedsound) {
+			if (Settings.soundEnabled) {
 				Assets.gothit.play(2);
 			}
 			world.players.get(playerNum).stunnedsound = false;
@@ -278,6 +281,18 @@ public class GameScreenClient extends Screen {
 	}
 
 	private void updateGameOver(List<TouchEvent> touchEvents) {
+		// record high score
+		if (world.players.size() > 1) {
+			for (int i = 0; i < 5; i++) {
+				if (gridCount[1] > Settings.highscores[i]) {
+					if (i < 4) {
+						Settings.highscores[i + 1] = Settings.highscores[i];
+					}
+					Settings.highscores[i] = gridCount[1];
+				}
+			}
+		}
+
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -309,8 +324,11 @@ public class GameScreenClient extends Screen {
 			drawGameOverUI();
 
 		// timer
-		if(timer<61) drawText(g, ((Integer) Math.round(timer)).toString(), 64, g.getHeight() - 42);
-		else drawText(g, "60", 64, g.getHeight() - 42);
+		if (timer < 61)
+			drawText(g, ((Integer) Math.round(timer)).toString(), 64,
+					g.getHeight() - 42);
+		else
+			drawText(g, "60", 64, g.getHeight() - 42);
 	}
 
 	private void drawWorld(World world) {
@@ -363,9 +381,9 @@ public class GameScreenClient extends Screen {
 		int index = 0;
 		for (Player player : players) {
 			Pixmap headPixmap;
-			if(index == 0)
+			if (index == 0)
 				headPixmap = Assets.mochi;
-			else 
+			else
 				headPixmap = Assets.bird;
 			x = player.x * 32 + 16;
 			y = player.y * 32 + 16;
@@ -405,37 +423,38 @@ public class GameScreenClient extends Screen {
 		g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 
-		g.drawPixmap(Assets.buttons, 192, 416, 64, 192, 64, 64); //down
-        g.drawPixmap(Assets.buttons, 128, 416, 64, 64, 64, 64); //left
-        g.drawPixmap(Assets.buttons, 192, 352, 0, 192, 64, 64); //up
-        g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64); //right
-        
-        //Update power up
-        if(!world.players.get(playerNum).powerUpList.isEmpty()){
-        	List<PowerUpType> list = world.players.get(playerNum).powerUpList;
-        	Pixmap powerUpPixmap = null;
-        	int x = 0;
+		g.drawPixmap(Assets.buttons, 192, 416, 64, 192, 64, 64); // down
+		g.drawPixmap(Assets.buttons, 128, 416, 64, 64, 64, 64); // left
+		g.drawPixmap(Assets.buttons, 192, 352, 0, 192, 64, 64); // up
+		g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64); // right
+
+		// Update power up
+		if (!world.players.get(playerNum).powerUpList.isEmpty()) {
+			List<PowerUpType> list = world.players.get(playerNum).powerUpList;
+			Pixmap powerUpPixmap = null;
+			int x = 0;
 			int y = 352;
-        	for (PowerUpType powerUp : list) {
- 				if (powerUp == PowerUpType.BOMB) {
- 					powerUpPixmap = Assets.bomb;
- 				}
- 				if (powerUp == PowerUpType.SPEEDUP) {
- 					powerUpPixmap = Assets.speedup;
- 				}
- 				if (powerUp == PowerUpType.STUN) {
- 					powerUpPixmap = Assets.stun;
- 				}
- 				g.drawPixmap(powerUpPixmap, x, y);
- 				x += 40;
- 			}
-        }
-        
-        //stunned image
-        if(world.players.get(playerNum).stunned){
-    		g.drawPixmap(Assets.stunned, g.getWidth()/2-50,  g.getHeight()/2-200, 0, 0, 100, 100);
-        }
-        
+			for (PowerUpType powerUp : list) {
+				if (powerUp == PowerUpType.BOMB) {
+					powerUpPixmap = Assets.bomb;
+				}
+				if (powerUp == PowerUpType.SPEEDUP) {
+					powerUpPixmap = Assets.speedup;
+				}
+				if (powerUp == PowerUpType.STUN) {
+					powerUpPixmap = Assets.stun;
+				}
+				g.drawPixmap(powerUpPixmap, x, y);
+				x += 40;
+			}
+		}
+
+		// stunned image
+		if (world.players.get(playerNum).stunned) {
+			g.drawPixmap(Assets.stunned, g.getWidth() / 2 - 50,
+					g.getHeight() / 2 - 200, 0, 0, 100, 100);
+		}
+
 	}
 
 	private void drawPausedUI() {
@@ -447,19 +466,21 @@ public class GameScreenClient extends Screen {
 
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
-		
+
 		String s = "";
-		for(int num :gridCount){
-			s += num+".";
+		for (int num : gridCount) {
+			s += num + ".";
 		}
-		drawText(g,s.substring(0, s.length()-1),g.getWidth()/2-20,150);
-		
+		drawText(g, s.substring(0, s.length() - 1), g.getWidth() / 2 - 20, 150);
+
 		int p0 = gridCount[0];
 		int p1 = gridCount[1];
-		if(p1>p0)
-			g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 0, 240, 50);
+		if (p1 > p0)
+			g.drawPixmap(Assets.winlose, g.getWidth() / 2 - 120, 50, 0, 0, 240,
+					50);
 		else
-			g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 50, 240, 50);
+			g.drawPixmap(Assets.winlose, g.getWidth() / 2 - 120, 50, 0, 50,
+					240, 50);
 
 		g.drawPixmap(Assets.gameOver, 62, 100);
 		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);
@@ -514,17 +535,17 @@ public class GameScreenClient extends Screen {
 		// TODO Auto-generated method stub
 
 	}
-	
-	private int[] countGrids(){
+
+	private int[] countGrids() {
 		int ans[] = new int[world.numPlayers];
-		for(int i=0;i<world.board.length;i++){
-			for(int j=0;j<world.board.length;j++){
-				if(world.board[i][j] > 0){
-					ans[world.board[i][j]-1] += 1;
+		for (int i = 0; i < world.board.length; i++) {
+			for (int j = 0; j < world.board.length; j++) {
+				if (world.board[i][j] > 0) {
+					ans[world.board[i][j] - 1] += 1;
 				}
 			}
 		}
-		
+
 		return ans;
 	}
 
