@@ -99,6 +99,7 @@ public class ClientScreen extends Screen {
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
 
+		g.drawPixmap(Assets.background, 0, 0);
 		g.drawPixmap(Assets.serverclient, g.getWidth()/2 -60, 0, 0, 48, 120, 48); // Client image
 		g.drawPixmap(Assets.serverclient, 0, 416, 0, 96, 120, 48); // Back button image
 		g.drawPixmap(Assets.serverclient, 200, 416, 0, 192, 120, 48); // Connect button image

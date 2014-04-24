@@ -201,7 +201,9 @@ public class ServerScreen extends Screen {
 			}
 			
 
-			authenticated = sm.initializeAuthenticate(t);
+			if (!(authenticated = sm.initializeAuthenticate(t))) {
+				return;
+			}
 			
 			if (accepted) {
 				numPlayers++;
