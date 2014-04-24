@@ -196,8 +196,11 @@ public class ServerScreen extends Screen {
 			if(accepted) {
 				System.out.println("client accpeted");
 				connected = true;
+			} else {
+				Log.d("ServerAccept", "Fail to accept");
 			}
 			
+
 			authenticated = sm.initializeAuthenticate(t);
 			
 			if (accepted) {

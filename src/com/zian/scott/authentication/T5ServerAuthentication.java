@@ -18,7 +18,7 @@ import javax.crypto.Cipher;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
-public class T5ServerAuthentication implements Authentication {
+public class T5ServerAuthentication implements Authentication{
 
 	private final int RSAKeySize = 1024;
 	private PublicKey pubKey = null;
@@ -90,7 +90,7 @@ public class T5ServerAuthentication implements Authentication {
 	}
 
 	public String safeRead() throws Exception {
-		
+
 		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
 		Object msg = obIn.readObject();
 

@@ -65,8 +65,9 @@ public class T5ClientAuthentication implements Authentication {
 		serverPubKey = kf.generatePublic(ks);
 		System.out.println("serverPubKey: "
 				+ Arrays.toString(serverPubKey.getEncoded()));
-
+		
 		return true;
+
 	}
 
 	public void safeWrite(String msg) throws Exception {
@@ -89,8 +90,7 @@ public class T5ClientAuthentication implements Authentication {
 		obOut.flush();
 	}
 
-	public String safeRead() throws Exception {
-		
+	public String safeRead() throws Exception {		
 		ObjectInputStream obIn = new ObjectInputStream(socket.getInputStream());
 		Object msg = obIn.readObject();
 		System.out.println("Message received: "+ msg.toString());

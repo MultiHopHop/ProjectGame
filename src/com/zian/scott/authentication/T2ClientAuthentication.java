@@ -36,6 +36,7 @@ public class T2ClientAuthentication implements Authentication {
 
 	@SuppressLint("TrulyRandom")
 	public boolean initialize() throws Exception {
+
 		// Part 1.1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -141,7 +142,7 @@ public class T2ClientAuthentication implements Authentication {
 		String nonceP2 = passwordAndNonce[1];
 		System.out.println("Original nonceP: " + Arrays.toString(nonceP));
 		if (!nonceP2.equals(Arrays.toString(nonceP))) {
-			System.out.println("nonceG is modified");
+			System.out.println("nonceP is modified");
 			return false;
 		}
 		
@@ -151,6 +152,7 @@ public class T2ClientAuthentication implements Authentication {
 	public String getServerPassword() {
 		return serverPassword;
 	}
+
 
 	public void safeWrite(String msg) throws Exception {
 		// TODO Auto-generated method stub
