@@ -34,6 +34,7 @@ public class T2ServerAuthentication implements Authentication {
 	}
 
 	public boolean initialize() throws Exception {
+
 		// Part 1 Generate key pair
 		KeyPairGenerator RSAKeyGen = KeyPairGenerator.getInstance("RSA");
 		SecureRandom random = new SecureRandom();
@@ -152,6 +153,8 @@ public class T2ServerAuthentication implements Authentication {
 		return clientPassword;
 	}
 
+
+	
 	public void safeWrite(String msg) throws Exception {
 		// TODO Auto-generated method stub
 		

@@ -211,7 +211,8 @@ public class GameScreenClient extends Screen {
 		}
 
 		// handle request from server
-		if (cm.ready()) {
+		int counter = 10;
+		while (cm.ready() && counter > 0) {
 			String serverRequest = cm.read();
 			Log.d("ServerRequest", serverRequest);
 

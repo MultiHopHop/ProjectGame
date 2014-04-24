@@ -22,19 +22,19 @@ import com.zian.scott.authentication.T5ServerAuthentication;
 /**
  * This class stores all the client sockets
  * 
- * Methods:
- * write, singleWrite, read, ready, close
+ * Methods: write, singleWrite, read, ready, close
  * 
  * @author zianli
- *
+ * 
  */
 public class ServerManagement {
 	private ServerSocket serverSocket;
 	public static final int SERVERPORT = 6000;
 	private PrintWriter writer;
-	private  BufferedReader reader;
+	private BufferedReader reader;
 	public List<Socket> sockets;
 	public static int counter;
+
 	private int authenticationType = 2; // 2-5
 	private Authentication authentication;
 
@@ -52,7 +52,7 @@ public class ServerManagement {
 	public boolean accept() {
 		try {
 			Socket socket = serverSocket.accept();
-			counter ++;
+			counter++;
 			sockets.add(socket);
 			Log.d("ServerAccept", String.valueOf(sockets.size()));
 			return true;
@@ -62,6 +62,7 @@ public class ServerManagement {
 		}
 		return false;
 	}
+
 
 	public boolean initializeAuthenticate(int t) {
 		this.authenticationType = t;
@@ -92,9 +93,10 @@ public class ServerManagement {
 		}
 		return ans;
 	}
-	
+
 	/**
 	 * This method writes to all clients
+	 * 
 	 * @param msg
 	 */
 	public void write(String msg) {
@@ -117,7 +119,7 @@ public class ServerManagement {
 				
 				writer = new PrintWriter(new BufferedWriter(
 						new OutputStreamWriter(socket.getOutputStream())), true);
-				writer.println(msg);		
+				writer.println(msg);
 				writer.flush();
 				Log.d("ServerWrite", msg);
 			} catch (IOException e) {
@@ -126,9 +128,10 @@ public class ServerManagement {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method sends message to a particular client
+	 * 
 	 * @param msg
 	 * @param index
 	 */
@@ -144,11 +147,11 @@ public class ServerManagement {
 		}
 		
 		try {
-			writer = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(sockets.get(index).getOutputStream())), true);
+			writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+					sockets.get(index).getOutputStream())), true);
 			writer.println(msg);
 			writer.flush();
-//			writer.close();
+			// writer.close();
 			Log.d("SingleServerWrite", msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -158,8 +161,10 @@ public class ServerManagement {
 
 	/**
 	 * This method can handle latest messages from all its clients.
+	 * 
 	 * @return a string of all messages (separated by lines)
 	 */
+
 	public String read(){		
 		StringBuilder builder = new StringBuilder();
 		String input = "";
@@ -178,13 +183,14 @@ public class ServerManagement {
 		
 		for (Socket socket: sockets) {
 			try {
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				reader = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
 				while (reader.ready()) {
 					input = reader.readLine();
 				}
 				Log.d("ServerRead", "reader.checkReady");
 				if (!input.equals("")) {
-					Log.d("ServerRead", "input: "+input);
+					Log.d("ServerRead", "input: " + input);
 					builder.append(input);
 				}
 				input = "";
@@ -196,16 +202,18 @@ public class ServerManagement {
 		Log.d("ServerRead", "builder: " + builder.toString());
 		return builder.toString();
 	}
-	
+
 	/**
 	 * This method check if there is any message from clients.
+	 * 
 	 * @return
 	 */
 	public boolean ready() {
 		boolean ready = false;
-		for (Socket socket: sockets) {
+		for (Socket socket : sockets) {
 			try {
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				reader = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
 				if (reader.ready()) {
 					ready = true;
 					break;
@@ -213,7 +221,7 @@ public class ServerManagement {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}			
+			}
 		}
 		return ready;
 	}

@@ -22,7 +22,7 @@ import com.zian.scott.authentication.T5ClientAuthentication;
  * This class handles client-side connection
  * 
  * @author zianli
- *
+ * 
  */
 public class ClientManagement {
 
@@ -30,22 +30,22 @@ public class ClientManagement {
 	private final String SERVER_IP;
 	private InetAddress serverAddr;
 	private Socket socket;
-	private  BufferedReader reader;
-	private  PrintWriter writer;
+	private BufferedReader reader;
+	private PrintWriter writer;
 	public int clientIndex = 0; // default
-	private int authenticationType = 2; // 2-5
+	int authenticationType = 2; // 2-5
 	private Authentication authentication;
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
-		
+
 		try {
 			this.serverAddr = InetAddress.getByName(SERVER_IP);
 			this.socket = new Socket(serverAddr, SERVERPORT);
-			this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.reader = new BufferedReader(new InputStreamReader(
+					socket.getInputStream()));
 			this.writer = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(socket.getOutputStream())),
-					true);
+					new OutputStreamWriter(socket.getOutputStream())), true);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -53,8 +53,10 @@ public class ClientManagement {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
+
+
 	
 	public boolean initializeAuthenticate(int t) {
 		this.authenticationType = t;
@@ -105,7 +107,7 @@ public class ClientManagement {
 		Log.d("ClientRead", output);
 		return output;
 	}
-	
+
 	public boolean ready() {
 		boolean output = false;
 		try {
@@ -116,6 +118,8 @@ public class ClientManagement {
 		}
 		return output;
 	}
+
+
 	
 	public void write(String msg){
 		if (authenticationType != 2) {
