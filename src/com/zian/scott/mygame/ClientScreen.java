@@ -201,6 +201,7 @@ public class ClientScreen extends Screen {
 
 
 			if (!(authenticated = cm.initializeAuthenticate(t))) {
+//				cm.stop();
 				return;
 			}
 			

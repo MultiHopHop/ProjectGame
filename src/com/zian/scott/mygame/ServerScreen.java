@@ -202,6 +202,7 @@ public class ServerScreen extends Screen {
 			
 
 			if (!(authenticated = sm.initializeAuthenticate(t))) {
+//				sm.stop();
 				return;
 			}
 			
