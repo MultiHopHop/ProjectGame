@@ -44,14 +44,27 @@ public class GameScreenServer extends Screen {
 	int maxNumPowerUps = 5;
 	int gridCount[];
 	private static String tempString = "";
+	
+	boolean ai = false;
+	private AI bot;
 
 	public GameScreenServer(Game game, ServerManagement sm) {
 		super(game);
 
 		this.sm = sm;
-		world = new World(sm.sockets.size() + 1);
 		timer = 0;
-		parser = new Parser(world);
+		
+		if(sm.sockets.size() == 0){
+			world = new World(2);
+			parser = new Parser(world);
+			ai = true;
+			bot = new AI(world,parser);
+		}
+		else
+			world = new World(sm.sockets.size() + 1);
+			parser = new Parser(world);
+		
+		
 	}
 
 	@Override
@@ -272,6 +285,11 @@ public class GameScreenServer extends Screen {
 			powerUpTimer -= randomTime;
 		}
 
+		if(ai){
+			bot.move();
+			bot.activate();
+		}
+		
 		// update world
 		while (worldTimer > tick) {
 			// broadcast move of player 0
@@ -534,6 +552,8 @@ public class GameScreenServer extends Screen {
 			int p1 = gridCount[1];
 			if(p0>p1)
 				g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 0, 240, 50);
+			else if(p0==p1)
+				g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 100, 240, 50);
 			else
 				g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 50, 240, 50);
 		}

@@ -14,7 +14,6 @@ public class World {
 	static final float TICK_DECREMENT = 0.05f;
 	static final float TICK_POWERUP = 5f;
 
-	public Player player, bot;
 	public PowerUp powerUp;
 	public List<PowerUp> powerUpList;
 	public boolean gameOver = false;
@@ -186,7 +185,7 @@ public class World {
 		board[x][y] = 1;
 	}
 	
-	public void speedup(final int playerIndex){
+	public void speedup(int playerIndex){
 		players.get(playerIndex).step = 2;
 		playerPowerUpTime.set(playerIndex, 5);
 		

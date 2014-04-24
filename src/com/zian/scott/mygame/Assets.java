@@ -18,11 +18,6 @@ public class Assets {
     public static Pixmap ready;
     public static Pixmap pause;
     public static Pixmap gameOver;
-    public static Pixmap headUp;
-    public static Pixmap headLeft;
-    public static Pixmap headDown;
-    public static Pixmap headRight;
-    public static Pixmap tail;
     public static Pixmap stun;
     public static Pixmap bomb;
     public static Pixmap speedup;   

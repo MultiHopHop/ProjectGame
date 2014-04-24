@@ -475,6 +475,9 @@ public class GameScreenClient extends Screen {
 		if (p1 > p0)
 			g.drawPixmap(Assets.winlose, g.getWidth() / 2 - 120, 50, 0, 0, 240,
 					50);
+		else if(p0==p1)
+			g.drawPixmap(Assets.winlose, g.getWidth() / 2 - 120, 50, 0, 100, 240,
+					50);
 		else
 			g.drawPixmap(Assets.winlose, g.getWidth() / 2 - 120, 50, 0, 50,
 					240, 50);
