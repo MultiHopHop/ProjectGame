@@ -33,7 +33,7 @@ public class GameScreenServer extends Screen {
 	private final int powerUpIntervalLow = 5;
 	private final int powerUpIntervalUp = 8;
 	private final int endTime = 60; //total game time
-	private static final float TICK_INITIAL = 1f;
+	private static final float TICK_INITIAL = 0.4f;
 	private ServerManagement sm;
 	Parser parser;
 	Random random = new Random();
@@ -286,8 +286,10 @@ public class GameScreenServer extends Screen {
 		}
 
 		if(ai){
-			bot.move();
-			bot.activate();
+			if (worldTimer > tick) {
+				bot.move();
+				bot.activate();
+			}
 		}
 		
 		// update world

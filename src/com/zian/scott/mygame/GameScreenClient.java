@@ -19,7 +19,6 @@ public class GameScreenClient extends Screen {
 
 	GameState state = GameState.Ready;
 	World world;
-	private String score = "0";
 	private static float timer;
 	private ClientManagement cm;
 	private Parser parser;

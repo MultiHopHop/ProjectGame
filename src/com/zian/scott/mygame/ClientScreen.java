@@ -1,4 +1,4 @@
-package com.zian.scott.mygame;
+	package com.zian.scott.mygame;
 
 import java.util.List;
 
@@ -19,6 +19,7 @@ public class ClientScreen extends Screen {
 	boolean authenticated = false;
 	
 	private int t;
+	private boolean pressed = false;
 
 	public ClientScreen(Game game, Integer t) {
 		super(game);
@@ -46,7 +47,10 @@ public class ClientScreen extends Screen {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					new Thread(new ClientThread()).start();
+					if(!pressed){
+						pressed = true;
+						new Thread(new ClientThread()).start();
+					}
 				}
 			}
 
@@ -201,7 +205,8 @@ public class ClientScreen extends Screen {
 
 
 			if (!(authenticated = cm.initializeAuthenticate(t))) {
-//				cm.stop();
+				cm.stop();
+				pressed = false;
 				return;
 			}
 			
@@ -213,6 +218,11 @@ public class ClientScreen extends Screen {
 				if (request.matches("[1-3]")) {
 					cm.clientIndex = Integer.parseInt(request);
 					connected = true;
+				}
+				else{
+					cm.stop();
+					pressed = false;
+					return;					
 				}
 			}
 
