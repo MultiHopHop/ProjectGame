@@ -20,7 +20,7 @@ import com.zian.scott.authentication.T4ServerAuthentication;
 import com.zian.scott.authentication.T5ServerAuthentication;
 
 /**
- * This class stores all the client sockets
+ * This class stores all the client sockets connected to server
  * 
  * Methods: write, singleWrite, read, ready, close
  * 
@@ -29,11 +29,11 @@ import com.zian.scott.authentication.T5ServerAuthentication;
  */
 public class ServerManagement {
 	private ServerSocket serverSocket;
-	public static final int SERVERPORT = 6000;
+	public static final int SERVERPORT = 6000; // default server port
 	private PrintWriter writer;
 	private BufferedReader reader;
-	public List<Socket> sockets;
-	public static int counter;
+	public List<Socket> sockets; // stores list of connected sockets
+	public static int counter; // count number of sockets connected
 
 	private int authenticationType = 2; // 2-5
 	private Authentication authentication;
@@ -63,7 +63,12 @@ public class ServerManagement {
 		return false;
 	}
 
-
+	/**
+	 * Initialize mutual authentication using protocol t
+	 * 
+	 * @param t
+	 * @return true if authentication is successful
+	 */
 	public boolean initializeAuthenticate(int t) {
 		this.authenticationType = t;
 		boolean ans = false;
@@ -151,7 +156,6 @@ public class ServerManagement {
 					sockets.get(index).getOutputStream())), true);
 			writer.println(msg);
 			writer.flush();
-			// writer.close();
 			Log.d("SingleServerWrite", msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -160,7 +164,7 @@ public class ServerManagement {
 	}
 
 	/**
-	 * This method can handle latest messages from all its clients.
+	 * This method can handle the last messages from all its clients.
 	 * 
 	 * @return a string of all messages (separated by lines)
 	 */

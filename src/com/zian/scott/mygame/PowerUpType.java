@@ -11,11 +11,10 @@ public enum PowerUpType
 	BOMB; // should change tiles surrounding player to his color
 	
 	/**
-	 * Returns a randomized powerup as defined in the enum list
+	 * Returns a randomized power-up as defined in the enum list
 	 * 
-	 * @return A random powerup
+	 * @return A random power-up
 	 */
-	
 	public static PowerUpType randomPowerup()
 	{
 		return Collections.unmodifiableList(Arrays.asList(values())).get(

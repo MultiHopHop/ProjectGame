@@ -12,6 +12,11 @@ public class Settings {
 	public static boolean soundEnabled = true;
 	public static int[] highscores = new int[] { 0, 0, 0, 0, 0 };
 
+	/**
+	 * Apply settings in .mygame file
+	 * 
+	 * @param files
+	 */
 	public static void load(FileIO files) {
 		BufferedReader in = null;
 		try {
@@ -57,6 +62,10 @@ public class Settings {
 		}
 	}
 	
+	/**
+	 * Add the score to high score list
+	 * @param score
+	 */
 	public static void addScore(int score) {
         for (int i = 0; i < 5; i++) {
             if (highscores[i] < score) {

@@ -26,15 +26,15 @@ import com.zian.scott.authentication.T5ClientAuthentication;
  */
 public class ClientManagement {
 
-	private static final int SERVERPORT = 6000;
-	private final String SERVER_IP;
+	private static final int SERVERPORT = 6000; // default server port
+	private final String SERVER_IP; // IP address of server
 	private InetAddress serverAddr;
 	private Socket socket;
 	private BufferedReader reader;
 	private PrintWriter writer;
-	public int clientIndex = 0; // default
-	int authenticationType = 2; // 2-5
-	private Authentication authentication;
+	public int clientIndex = 0; // default 0, stores client's player index
+	int authenticationType = 2; // ranging from 2 to 5
+	private Authentication authentication; // stores authentication object
 
 	public ClientManagement(String serverip) {
 		this.SERVER_IP = serverip;
@@ -57,7 +57,12 @@ public class ClientManagement {
 	}
 
 
-	
+	/**
+	 * Initialize mutual authentication using protocol t
+	 * 
+	 * @param t
+	 * @return true if authentication is successful
+	 */
 	public boolean initializeAuthenticate(int t) {
 		this.authenticationType = t;
 		try {
@@ -84,6 +89,11 @@ public class ClientManagement {
 		
 	}
 	
+	/**
+	 * read lines in bufferReader
+	 * 
+	 * @return
+	 */
 	public String read(){
 		if (authenticationType != 2) {
 			try {
@@ -108,6 +118,11 @@ public class ClientManagement {
 		return output;
 	}
 
+	/**
+	 * check if bufferReader is ready
+	 * 
+	 * @return
+	 */
 	public boolean ready() {
 		boolean output = false;
 		try {
@@ -120,7 +135,10 @@ public class ClientManagement {
 	}
 
 
-	
+	/**
+	 * Write a message to printWriter
+	 * @param msg
+	 */
 	public void write(String msg){
 		if (authenticationType != 2) {
 			try {
@@ -135,6 +153,9 @@ public class ClientManagement {
 		writer.flush();
 	}
 
+	/**
+	 * close bufferReader, printWriter and the socket
+	 */
 	public void stop() {
 		writer.close();
 		try {
