@@ -13,28 +13,32 @@ import com.zian.scott.framework.Input.TouchEvent;
 
 public class GameScreenClient extends Screen {
 
+	//Game State types
 	enum GameState {
 		Ready, Running, Paused, GameOver
 	}
 
-	GameState state = GameState.Ready;
-	World world;
-	private static float timer;
-	private ClientManagement cm;
-	private Parser parser;
-	private int playerNum;
-	int gridCount[];
+	GameState state = GameState.Ready; //state of game
+	World world; //instance of world
+	private static float timer; //game's timer
+	private ClientManagement cm; //instance of ClientManagement to manage socket connection
+	private Parser parser; //instance of parser to parse messages
+	private int playerNum; //player's number
+	int gridCount[]; //stores number of tiles occupied by each player starting with player0
 
 	public GameScreenClient(Game game, ClientManagement cm, int numPlayers) {
 		super(game);
 		this.cm = cm;
 		Log.d("CreateWorld", "num: " + numPlayers);
-		world = new World(numPlayers);
-		timer = 0;
-		parser = new Parser(world);
-		playerNum = cm.clientIndex;
+		world = new World(numPlayers); //initialize world with number of players
+		timer = 0; // set timer to 0
+		parser = new Parser(world); //initialize parser with world
+		playerNum = cm.clientIndex; //retrieve player's number
 	}
 
+	/*The update method increases the timer if game is not paused
+	 *then calls the correct method based on the current game state
+	 *to process the touch inputs of the player*/
 	@Override
 	public void update(float deltaTime) {
 		if (state != GameState.Paused) {
@@ -55,11 +59,7 @@ public class GameScreenClient extends Screen {
 		}
 	}
 
-	/**
-	 * change state to GameState.Running when server issues 'ready
-	 * 
-	 * @param touchEvents
-	 */
+	/* change state to GameState.Running when server issues 'ready */
 	private void updateReady(List<TouchEvent> touchEvents) {
 		// Log.d("ClientReadgState", "timer: "+timer);
 
@@ -69,6 +69,11 @@ public class GameScreenClient extends Screen {
 		}
 	}
 
+	/* updates when the game state is running
+	 * 1) processes the touch inputs of the player
+	 * 2) handle requests from server
+	 * 3) calls for stun sound if player is stunned
+	 */
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
 		// Log.d("gameState", "running");
 
@@ -79,7 +84,7 @@ public class GameScreenClient extends Screen {
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
-				if (event.x < 64 && event.y < 64) {
+				if (event.x < 64 && event.y < 64) { //pause button
 					if (Settings.soundEnabled) {
 						Assets.click1.play(1);
 					}
@@ -89,25 +94,25 @@ public class GameScreenClient extends Screen {
 
 			// for each input, send the corresponding request to server
 			if (event.type == TouchEvent.TOUCH_DOWN) {
-				if (inBounds(event, 256, 416, 64, 64)) {
+				if (inBounds(event, 256, 416, 64, 64)) { //right button
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + playerNum + " move right";
 				}
-				if (inBounds(event, 192, 416, 64, 64)) {
+				if (inBounds(event, 192, 416, 64, 64)) { //down button
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + playerNum + " move down";
 				}
-				if (inBounds(event, 128, 416, 64, 64)) {
+				if (inBounds(event, 128, 416, 64, 64)) { //left button
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
 					tempString = "Player" + playerNum + " move left";
 				}
-				if (inBounds(event, 192, 352, 64, 64)) {
+				if (inBounds(event, 192, 352, 64, 64)) { //up button
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
@@ -204,8 +209,8 @@ public class GameScreenClient extends Screen {
 			}
 		}
 
-		if (!tempString.equals("")) {
-			cm.write(tempString);
+		if (!tempString.equals("")) { //if there was a move input
+			cm.write(tempString); // write to server
 			Log.d("ClientWrite", "start: " + tempString);
 		}
 
@@ -227,8 +232,7 @@ public class GameScreenClient extends Screen {
 				state = GameState.GameOver;
 			}
 
-			// handle the requests from server, which would be moves of all
-			// players
+			// handle the requests from server, which would be moves of all players
 			String[] requests = serverRequest.split("\n");
 			for (String request : requests) {
 				parser.parse(request);
@@ -237,7 +241,7 @@ public class GameScreenClient extends Screen {
 
 		// world.update(deltaTime);
 
-		// stun sound
+		// stun sound if player is stunned
 		if (world.players.get(playerNum).stunnedsound) {
 			if (Settings.soundEnabled) {
 				Assets.gothit.play(2);
@@ -246,13 +250,17 @@ public class GameScreenClient extends Screen {
 		}
 	}
 
+	/*Processes the touch inputs of the user and
+	 * instructions from Server if game is in the paused state*/
 	private void updatePaused(List<TouchEvent> touchEvents) {
+		
+		// Process instructions from Server
 		if (cm.ready()) {
 			String input = cm.read();
-			if (input.contains("resume")) {
+			if (input.contains("resume")) { //Server wants to resume game
 				state = GameState.Running;
 				return;
-			} else if (input.contains("endGame")) {
+			} else if (input.contains("endGame")) { // Server wants to end game
 				cm.stop();
 				game.setScreen(new MainMenuScreen(game));
 				return;
@@ -263,14 +271,14 @@ public class GameScreenClient extends Screen {
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
-				if (inBounds(event, 80, 100, 160, 48)) {
+				if (inBounds(event, 80, 100, 160, 48)) { //Client wants to resume game
 					if (Settings.soundEnabled)
 						Assets.click.play(1);
 					cm.write("resume");
 					// state = GameState.Running;
 					return;
 				}
-				if (inBounds(event, 80, 148, 160, 48)) {
+				if (inBounds(event, 80, 148, 160, 48)) { //Client wants to end game
 					if (Settings.soundEnabled)
 						Assets.click.play(1);
 					cm.write("endGame");
@@ -280,6 +288,8 @@ public class GameScreenClient extends Screen {
 		}
 	}
 
+	/*Processes the touch inputs of the user and
+	 *records highscore if game is in the Game Over state*/
 	private void updateGameOver(List<TouchEvent> touchEvents) {
 		// record high score
 		if (world.players.size() > 1) {
@@ -293,7 +303,7 @@ public class GameScreenClient extends Screen {
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
-			if (event.type == TouchEvent.TOUCH_UP) {
+			if (event.type == TouchEvent.TOUCH_UP) { //X button
 				if (event.x >= 128 && event.x <= 192 && event.y >= 200
 						&& event.y <= 264) {
 					if (Settings.soundEnabled)
@@ -305,12 +315,17 @@ public class GameScreenClient extends Screen {
 		}
 	}
 
+	/* present draws the required graphics onto the game screen */
 	@Override
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
 
-		g.drawPixmap(Assets.background, 0, 0);
+		g.drawPixmap(Assets.background, 0, 0); //background image
+		
+		//Draws the game world
 		drawWorld(world);
+		
+		//Draws the specified UI based on the game state
 		if (state == GameState.Ready)
 			drawReadyUI();
 		if (state == GameState.Running)
@@ -320,7 +335,7 @@ public class GameScreenClient extends Screen {
 		if (state == GameState.GameOver)
 			drawGameOverUI();
 
-		// timer
+		// draws timer
 		if (timer < 61)
 			drawText(g, ((Integer) Math.round(timer)).toString(), 64,
 					g.getHeight() - 42);
@@ -328,12 +343,14 @@ public class GameScreenClient extends Screen {
 			drawText(g, "60", 64, g.getHeight() - 42);
 	}
 
+	/* Draws the game world */
 	private void drawWorld(World world) {
 		Graphics g = game.getGraphics();
 		List<Player> players = world.players;
 		List<PowerUp> powerUpList = world.powerUpList;
 		int x, y;
 
+		// Colours the tiles in the board
 		for (int i = 0; i < world.WORLD_WIDTH; i++) {
 			for (int j = 0; j < world.WORLD_HEIGHT; j++) {
 				switch (world.board[i][j]) {
@@ -375,6 +392,8 @@ public class GameScreenClient extends Screen {
 				g.drawPixmap(powerUpPixmap, x, y);
 			}
 		}
+		
+		// Draws player icon: bird or mochi
 		int index = 0;
 		for (Player player : players) {
 			Pixmap headPixmap;
@@ -395,8 +414,10 @@ public class GameScreenClient extends Screen {
 
 	}
 
+	/* Draws the UI for ready state */
 	private void drawReadyUI() {
 		Graphics g = game.getGraphics();
+		//draw count down to start
 		if (timer < 1) {
 			g.drawPixmap(Assets.numbers, 150, 100, 60, 0, 20, 32);
 		} else if (timer < 2) {
@@ -408,16 +429,19 @@ public class GameScreenClient extends Screen {
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
+	/* Draws the UI for running state */
 	private void drawRunningUI() {
 		Graphics g = game.getGraphics();
 
+		// Draws the lines for the grid
 		for (int i = 1; i < world.WORLD_WIDTH; i++) {
 			g.drawLine(i * 32, 0, i * 32, 320, Color.BLACK);
 		}
 		for (int j = 1; j < world.WORLD_HEIGHT; j++) {
 			g.drawLine(0, j * 32, 320, j * 32, Color.BLACK);
 		}
-		g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);
+		
+		g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64); // pause button
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 
 		g.drawPixmap(Assets.buttons, 192, 416, 64, 192, 64, 64); // down
@@ -454,22 +478,26 @@ public class GameScreenClient extends Screen {
 
 	}
 
+	/* Draws the UI for paused state */
 	private void drawPausedUI() {
 		Graphics g = game.getGraphics();
 
-		g.drawPixmap(Assets.pause, 80, 100);
+		g.drawPixmap(Assets.pause, 80, 100); // paused options
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
+	/* Draws the UI for Game Over state */
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 
+		//Draw the number of tiles for each player starting with player0
 		String s = "";
 		for (int num : gridCount) {
 			s += num + ".";
 		}
 		drawText(g, s.substring(0, s.length() - 1), g.getWidth() / 2 - 20, 150);
 
+		//Draw Win, lose or Draw
 		int p0 = gridCount[0];
 		int p1 = gridCount[1];
 		if (p1 > p0)
@@ -482,11 +510,12 @@ public class GameScreenClient extends Screen {
 			g.drawPixmap(Assets.winlose, g.getWidth() / 2 - 120, 50, 0, 50,
 					240, 50);
 
-		g.drawPixmap(Assets.gameOver, 62, 100);
-		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);
+		g.drawPixmap(Assets.gameOver, 62, 100); //GameOver image
+		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64); // X button image
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
+	/* drawText draws numbers which are represented in a String input to a specific x and y position*/
 	public void drawText(Graphics g, String line, int x, int y) {
 		int len = line.length();
 		for (int i = 0; i < len; i++) {
@@ -535,7 +564,8 @@ public class GameScreenClient extends Screen {
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	/*Counts and returns the number of tiles for each player*/
 	private int[] countGrids() {
 		int ans[] = new int[world.numPlayers];
 		for (int i = 0; i < world.board.length; i++) {

@@ -9,17 +9,19 @@ import com.zian.scott.framework.Input.TouchEvent;
 
 public class MultiPlayerScreen extends Screen {
 	
+	// booleans of each authentication t, if true it is selected, if false it is not
 	private boolean t2 = true;
 	private boolean t3 = false;
 	private boolean t4 = false;
 	private boolean t5 = false;
 	
-	private Integer t = 2;	
+	private Integer t = 2;	// Integer of the authentication that was selected
 
 	public MultiPlayerScreen(Game game) {
 		super(game);
 	}
 
+	/*The update method processes the touch inputs of the user*/
 	@Override
 	public void update(float deltaTime) {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
@@ -86,14 +88,15 @@ public class MultiPlayerScreen extends Screen {
 		}
 	}
 
+	/* present draws the required graphics onto the game screen */
 	@Override
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
 		g.drawPixmap(Assets.background, 0, 0);
-		g.drawPixmap(Assets.mochi, g.getWidth()/2-150+60-16, g.getHeight()/2-150-32, 0, 0, 32, 32); // mochi image
-		g.drawPixmap(Assets.serverclient, g.getWidth()/2-150, g.getHeight()/2-150, 0, 0, 120, 48); // Server button image
-		g.drawPixmap(Assets.bird, g.getWidth()/2+30+60-16, g.getHeight()/2-150-32, 0, 0, 32, 32); // bird image
-		g.drawPixmap(Assets.serverclient, g.getWidth()/2+30, g.getHeight()/2-150, 0, 48, 120, 48); // Client button image
+		g.drawPixmap(Assets.mochi, g.getWidth()/2-150+60-16, g.getHeight()/2-150-32, 0, 0, 32, 32); // Mochi image
+		g.drawPixmap(Assets.serverclient, g.getWidth()/2-150, g.getHeight()/2-150, 0, 0, 120, 48); // Mochi Text image
+		g.drawPixmap(Assets.bird, g.getWidth()/2+30+60-16, g.getHeight()/2-150-32, 0, 0, 32, 32); // Bird image
+		g.drawPixmap(Assets.serverclient, g.getWidth()/2+30, g.getHeight()/2-150, 0, 48, 120, 48); // Bird Text image
 		g.drawPixmap(Assets.serverclient, 0, 416, 0, 96, 120, 48); // Back button image
 		
 		// T2 button image
@@ -131,6 +134,8 @@ public class MultiPlayerScreen extends Screen {
 		
 	}
 	
+	/*returns true if the TouchEvent occurs within the speified box described by x,y,width and height
+	  else returns false*/
 	public boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
 		if (event.x > x && event.x < x + width - 1 &&
 				event.y > y && event.y < y + height - 1) {

@@ -8,16 +8,18 @@ import com.zian.scott.framework.Screen;
 import com.zian.scott.framework.Input.TouchEvent;
 
 public class HighscoreScreen extends Screen {
-	String lines[] = new String[5];
+	String lines[] = new String[5]; //Array to store the top 5 highscores 
 	
 	public HighscoreScreen(Game game) {
 		super(game);
 
+		//Initialise the highscore array
 		for (int i=0; i<5; i++) {
 			lines[i] = "" + (i+1) + ". " + Settings.highscores[i];
 		}
 	}
 
+	/*The update method processes the touch inputs of the user*/
 	@Override
 	public void update(float deltaTime) {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
@@ -27,7 +29,7 @@ public class HighscoreScreen extends Screen {
 		for (int i=0; i<len; i++) {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
-				if (event.x < 64 && event.y > 416) {
+				if (event.x < 64 && event.y > 416) { // back button
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
@@ -38,22 +40,25 @@ public class HighscoreScreen extends Screen {
 		}
 	}
 
+	/* present draws the required graphics onto the game screen */
 	@Override
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
 		
-		g.drawPixmap(Assets.background, 0, 0);
-		g.drawPixmap(Assets.mainMenu, 64, 20, 0, 42, 196, 42);
+		g.drawPixmap(Assets.background, 0, 0); //background image
+		g.drawPixmap(Assets.mainMenu, 64, 20, 0, 42, 196, 42); //Highscore image
 		
+		// draw the 5 highscores
 		int y = 100;
 		for (int i=0; i<5; i++) {
 			drawText(g, lines[i], 20, y);
 			y += 50;
 		}
 		
-		g.drawPixmap(Assets.buttons, 0, 416, 64, 64, 64, 64);
+		g.drawPixmap(Assets.buttons, 0, 416, 64, 64, 64, 64); //back image
 	}
 	
+	/* drawText draws numbers which are represented in a String input to a specific x and y position*/
 	public void drawText(Graphics g, String line, int x, int y) {
 		int len = line.length();
 		for (int i=0; i<len; i++) {

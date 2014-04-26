@@ -20,53 +20,59 @@ import com.zian.scott.framework.Input.TouchEvent;
  * 
  */
 public class GameScreenServer extends Screen {
+	
+	//Game State types
 	enum GameState {
 		Ready, Running, Paused, GameOver
 	}
 
-	GameState state = GameState.Ready;
-	World world;
+	GameState state = GameState.Ready; //state of game
+	World world; //instance of world
 	String score = "0";
-	private static float timer; // The timer indicates state of game, unit is
-								// second
-	private static float powerUpTimer;
-	private final int powerUpIntervalLow = 5;
-	private final int powerUpIntervalUp = 8;
+	private static float timer; // The timer indicates state of game, unit is second
+	private static float powerUpTimer; // timer for powerup generation
+	private final int powerUpIntervalLow = 5; // lower limit for powerup generation
+	private final int powerUpIntervalUp = 8; // upper limit for powerup generation
 	private final int endTime = 60; //total game time
-	private static final float TICK_INITIAL = 0.4f;
-	private ServerManagement sm;
-	Parser parser;
-	Random random = new Random();
+	private static final float TICK_INITIAL = 0.4f; // time interval for every update
+	private ServerManagement sm; //instance of ServerManagement to manage socket connection
+	Parser parser; //instance of parser to parse messages
+	Random random = new Random(); // To generate random time for powerup generation
 	
-	private static float worldTimer;
-	private static float tick = TICK_INITIAL;
+	private static float worldTimer; // time interval to update the world
+	private static float tick = TICK_INITIAL; // time interval for every update
 	
-	int maxNumPowerUps = 5;
-	int gridCount[];
-	private static String tempString = "";
+	int maxNumPowerUps = 5; // Maximum number of powerups + 1
+	int gridCount[]; //stores number of tiles occupied by each player starting with player0
+	private static String tempString = ""; 
 	
-	boolean ai = false;
-	private AI bot;
+	boolean ai = false; // if AI is required
+	private AI bot; //instance of AI
 
 	public GameScreenServer(Game game, ServerManagement sm) {
 		super(game);
 
 		this.sm = sm;
-		timer = 0;
+		timer = 0; // set timer to 0
 		
+		//If Single Player mode
 		if(sm.sockets.size() == 0){
-			world = new World(2);
-			parser = new Parser(world);
-			ai = true;
-			bot = new AI(world,parser);
+			world = new World(2); //initialize world with number of players
+			parser = new Parser(world); //initialize parser with world
+			ai = true; //ai required
+			bot = new AI(world,parser); //initialize AI
 		}
+		//MultiPlayer mode
 		else
-			world = new World(sm.sockets.size() + 1);
-			parser = new Parser(world);
+			world = new World(sm.sockets.size() + 1); //initialize world with number of players
+			parser = new Parser(world); //initialize parser with world
 		
 		
 	}
 
+	/*The update method increases the timer if game is not paused
+	 *then calls the correct method based on the current game state
+	 *to process the touch inputs of the player*/
 	@Override
 	public void update(float deltaTime) {
 		if (state != GameState.Paused) {
@@ -87,11 +93,7 @@ public class GameScreenServer extends Screen {
 		}
 	}
 
-	/**
-	 * Change state to GameState.Running when server issues 'ready
-	 * 
-	 * @param touchEvents
-	 */
+	/* change state to GameState.Running when server issues 'ready */
 	private void updateReady(List<TouchEvent> touchEvents) {
 		if (timer > 3) {
 			Log.d("ServerReadgState", "timer: " + timer);
@@ -102,15 +104,28 @@ public class GameScreenServer extends Screen {
 		}
 	}
 
+	/* updates when the game state is running
+	 * 1) Increase timers
+	 * 2) processes the touch inputs of the player
+	 * 3) handle request from clients
+	 * 4) spawn power up
+	 * 5) Handles AI
+	 * 6) update world
+	 * 7) handles end of game
+	 * 4) calls for stun sound if player is stunned
+	 */
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
+		
+		//increase Timers
 		powerUpTimer += deltaTime;
 		worldTimer += deltaTime;
 
+		// handle touch input
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
-				if (event.x < 64 && event.y < 64) {
+				if (event.x < 64 && event.y < 64) { //pause
 					if (Settings.soundEnabled) {
 						Assets.click1.play(1);
 					}
@@ -265,7 +280,8 @@ public class GameScreenServer extends Screen {
 
 		// spawn power up
 		float randomTime = random.nextFloat()
-				* (powerUpIntervalUp - powerUpIntervalLow) + powerUpIntervalLow;
+				* (powerUpIntervalUp - powerUpIntervalLow) + powerUpIntervalLow; //creates a random time
+		//check if it is possible to spawn a powerup
 		if (powerUpTimer > randomTime && world.powerUpList.size() < maxNumPowerUps) {
 			world.placePowerUp();
 			String message = "";
@@ -282,9 +298,10 @@ public class GameScreenServer extends Screen {
 			}
 			sm.write(message);
 			Log.d("CheckPowerUp", "message: "+message);
-			powerUpTimer -= randomTime;
+			powerUpTimer -= randomTime; //decrease timer as powerup has been spawned
 		}
 
+		// Handles AI
 		if(ai){
 			if (worldTimer > tick) {
 				bot.move();
@@ -299,7 +316,7 @@ public class GameScreenServer extends Screen {
 				sm.write(tempString);
 				tempString = "";
 			}
-			sm.write("Server update");
+			sm.write("Server update"); //tell players to update world
 			world.update();
 			Log.d("ServerWrite", "Server update");
 			worldTimer -= tick;
@@ -324,14 +341,18 @@ public class GameScreenServer extends Screen {
 		}
 	}
 
+	/*Processes the touch inputs of the user and
+	 * messages from Clients if game is in the paused state*/
 	private void updatePaused(List<TouchEvent> touchEvents) {
+		
+		// Process messages from Clients
 		if (sm.ready()) {
 			String input = sm.read();
-			if (input.equals("resume")) {
+			if (input.equals("resume")) { //Client wants to resume game
 				sm.write("resume");
 				state = GameState.Running;
 				return;
-			} else if (input.equals("endGame")) {
+			} else if (input.equals("endGame")) { //Client wants to end game
 				sm.write(input);
 				sm.stop();
 				game.setScreen(new MainMenuScreen(game));
@@ -339,18 +360,19 @@ public class GameScreenServer extends Screen {
 			}
 		}
 
+		// Touch inputs
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
 			if (event.type == TouchEvent.TOUCH_UP) {
-				if (inBounds(event, 80, 100, 160, 48)) {
+				if (inBounds(event, 80, 100, 160, 48)) { //Server wants to resume game
 					if (Settings.soundEnabled)
 						Assets.click.play(1);
 					sm.write("resume");
 					state = GameState.Running;
 					return;
 				}
-				if (inBounds(event, 80, 148, 160, 48)) {
+				if (inBounds(event, 80, 148, 160, 48)) { //Server wants to end game
 					if (Settings.soundEnabled)
 						Assets.click.play(1);
 					sm.write("endGame");
@@ -362,6 +384,8 @@ public class GameScreenServer extends Screen {
 		}
 	}
 
+	/*Processes the touch inputs of the user and
+	 *records highscore if game is in the Game Over state*/
 	private void updateGameOver(List<TouchEvent> touchEvents) {
 		// record high score
 		if (world.players.size() > 1) {
@@ -372,6 +396,7 @@ public class GameScreenServer extends Screen {
 			}
 		}
 		
+		// Touch inputs
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -387,12 +412,17 @@ public class GameScreenServer extends Screen {
 		}
 	}
 
+	/* present draws the required graphics onto the game screen */
 	@Override
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
 
-		g.drawPixmap(Assets.background, 0, 0);
+		g.drawPixmap(Assets.background, 0, 0); //background image
+		
+		//Draws the game world
 		drawWorld(world);
+		
+		//Draws the specified UI based on the game state
 		if (state == GameState.Ready)
 			drawReadyUI();
 		if (state == GameState.Running)
@@ -402,17 +432,19 @@ public class GameScreenServer extends Screen {
 		if (state == GameState.GameOver)
 			drawGameOverUI();
 		
-		// timer
+		// draws timer
 		if(timer<61) drawText(g, ((Integer) Math.round(timer)).toString(), 64, g.getHeight() - 42);
 		else drawText(g, "60", 64, g.getHeight() - 42);
 	}
 
+	/* Draws the game world */
 	private void drawWorld(World world) {
 		Graphics g = game.getGraphics();
 		List<Player> players = world.players;
 		List<PowerUp> powerUpList = world.powerUpList;
 		int x, y;
 
+		// Colours the tiles in the board
 		for (int i = 0; i < world.WORLD_WIDTH; i++) {
 			for (int j = 0; j < world.WORLD_HEIGHT; j++) {
 				switch (world.board[i][j]) {
@@ -456,6 +488,7 @@ public class GameScreenServer extends Screen {
 		}
 
 
+		// Draws player icon: bird or mochi
 		int index = 0;
 		for (Player player : players) {
 			Pixmap headPixmap;
@@ -476,8 +509,10 @@ public class GameScreenServer extends Screen {
 
 	}
 
+	/* Draws the UI for ready state */
 	private void drawReadyUI() {
 		Graphics g = game.getGraphics();
+		//draw count down to start
 		if (timer < 1) {
 			g.drawPixmap(Assets.numbers, 150, 100, 60, 0, 20, 32);
 		} else if (timer < 2) {
@@ -488,17 +523,19 @@ public class GameScreenServer extends Screen {
 		// g.drawPixmap(Assets.ready, 47, 100);
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
-
+	
+	/* Draws the UI for running state */
 	private void drawRunningUI() {
 		Graphics g = game.getGraphics();
 
+		// Draws the lines for the grid
 		for (int i = 1; i < world.WORLD_WIDTH; i++) {
 			g.drawLine(i * 32, 0, i * 32, 320, Color.BLACK);
 		}
 		for (int j = 1; j < world.WORLD_HEIGHT; j++) {
 			g.drawLine(0, j * 32, 320, j * 32, Color.BLACK);
 		}
-		g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);
+		g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64); // pause button
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 
 		g.drawPixmap(Assets.buttons, 192, 416, 64, 192, 64, 64); //down
@@ -533,22 +570,26 @@ public class GameScreenServer extends Screen {
         }
 	}
 
+	/* Draws the UI for paused state */
 	private void drawPausedUI() {
 		Graphics g = game.getGraphics();
 
-		g.drawPixmap(Assets.pause, 80, 100);
+		g.drawPixmap(Assets.pause, 80, 100); // paused options
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
+	/* Draws the UI for Game Over state */
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 
+		//Draw the number of tiles for each player starting with player0
 		String s = "";		
 		for(int num :gridCount){
 			s += num+".";
 		}
 		drawText(g,s.substring(0, s.length()-1),g.getWidth()/2-20,150);
 		
+		//Draw Win, lose or Draw
 		if (world.players.size() > 1) {
 			int p0 = gridCount[0];
 			int p1 = gridCount[1];
@@ -560,11 +601,12 @@ public class GameScreenServer extends Screen {
 				g.drawPixmap(Assets.winlose, g.getWidth()/2-120, 50, 0, 50, 240, 50);
 		}
 				
-		g.drawPixmap(Assets.gameOver, 62, 100);
-		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64);
+		g.drawPixmap(Assets.gameOver, 62, 100); //GameOver image
+		g.drawPixmap(Assets.buttons, 128, 200, 0, 128, 64, 64); // X button image
 		g.drawLine(0, 320, 480, 320, Color.BLACK);
 	}
 
+	/* drawText draws numbers which are represented in a String input to a specific x and y position*/
 	public void drawText(Graphics g, String line, int x, int y) {
 		int len = line.length();
 		for (int i = 0; i < len; i++) {
@@ -614,6 +656,7 @@ public class GameScreenServer extends Screen {
 
 	}
 	
+	/*Counts and returns the number of tiles for each player*/
 	private int[] countGrids(){
 		int ans[] = new int[world.numPlayers];
 		for(int i=0;i<world.board.length;i++){

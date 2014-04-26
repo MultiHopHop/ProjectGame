@@ -11,21 +11,22 @@ import com.zian.scott.framework.Input.TouchEvent;
 
 public class ClientScreen extends Screen {
 
-	private ClientManagement cm;
-	private static String SERVER_IP = "";
-	private int numPlayers;
+	private ClientManagement cm; //cm manages the socket connection
+	private static String SERVER_IP = ""; //IP of server
+	private int numPlayers; //number of players in the game
 
-	boolean connected = false;
-	boolean authenticated = false;
+	boolean connected = false; //check if client has been connected to server
+	boolean authenticated = false; //check if authentication passes or fails
 	
-	private int t;
-	private boolean pressed = false;
+	private int t; //Authentication type number
+	private boolean pressed = false;  //check if connect button was pressed
 
 	public ClientScreen(Game game, Integer t) {
 		super(game);
 		this.t = t;
 	}
 
+	/*The update method processes the touch inputs of the user*/
 	@Override
 	public void update(float deltaTime) {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
@@ -47,13 +48,14 @@ public class ClientScreen extends Screen {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					if(!pressed){
+					if(!pressed){ // connect button was pressed
 						pressed = true;
-						new Thread(new ClientThread()).start();
+						new Thread(new ClientThread()).start(); //initialize Client
 					}
 				}
 			}
 
+			//hides the numberpad if connected
 			if(!connected){
 				if (event.type == TouchEvent.TOUCH_DOWN) { //code for numbpad
 					if (inBounds(event, game.getGraphics().getWidth()/2-81, 150, 52, 50)) {  // 1
@@ -99,6 +101,7 @@ public class ClientScreen extends Screen {
 		}
 	}
 
+	/* present draws the required graphics onto the game screen */
 	@Override
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
@@ -155,6 +158,8 @@ public class ClientScreen extends Screen {
 
 	}
 
+	/*returns true if the TouchEvent occurs within the speified box described by x,y,width and height
+	  else returns false*/
 	public boolean inBounds(TouchEvent event, int x, int y, int width,
 			int height) {
 		if (event.x > x && event.x < x + width - 1 && event.y > y
@@ -165,6 +170,7 @@ public class ClientScreen extends Screen {
 		}
 	}
 
+	/* drawText draws numbers which are represented in a String input to a specific x and y position*/
 	public void drawText(Graphics g, String line, int x, int y) {
 		int len = line.length();
 		for (int i = 0; i < len; i++) {
@@ -192,44 +198,39 @@ public class ClientScreen extends Screen {
 
 	class ClientThread implements Runnable {
 
-		// @Override
 		public void run() {
 
-			// cm = new ClientManagement(SERVER_IP);
-			//
-			// CommunicationThread commThread = new CommunicationThread();
-			// new Thread(commThread).start();
-
-			cm = new ClientManagement(SERVER_IP);
+			cm = new ClientManagement(SERVER_IP); // creates an instance of ClientManagement
 			Log.d("ClientRequest", "request");
 
 
-			if (!(authenticated = cm.initializeAuthenticate(t))) {
-				cm.stop();
-				pressed = false;
+			if (!(authenticated = cm.initializeAuthenticate(t))) { // initialize Authentication
+				//if Authentication fails
+				cm.stop(); //stop ClientManagement
+				pressed = false; //allow press on Connect button
 				return;
 			}
 			
 			String input;
-			input = cm.read();
-			String[] requests = input.split("\n");
+			input = cm.read(); //reads from socket
+			String[] requests = input.split("\n"); // split message into lines
 			Log.d("TestClient", input);
-			for (String request : requests) {
-				if (request.matches("[1-3]")) {
-					cm.clientIndex = Integer.parseInt(request);
-					connected = true;
+			for (String request : requests) { //examine every line
+				if (request.matches("[1-3]")) { // check if line contains player number
+					cm.clientIndex = Integer.parseInt(request); //set player number
+					connected = true; //assert connection to true
 				}
-				else{
-					cm.stop();
-					pressed = false;
+				else{ //line is invalid
+					cm.stop(); //stop CM
+					pressed = false; //allow press on Connect button
 					return;					
 				}
 			}
 
-			input = cm.read();
-			if (input.contains("start")) {
-				numPlayers = Integer.parseInt(cm.read().substring(0, 1));
-				game.setScreen(new GameScreenClient(game, cm, numPlayers));
+			input = cm.read(); //reads from socket
+			if (input.contains("start")) {//examine if input contains start
+				numPlayers = Integer.parseInt(cm.read().substring(0, 1)); //set number of players
+				game.setScreen(new GameScreenClient(game, cm, numPlayers)); //go to game screen
 			}
 			
 

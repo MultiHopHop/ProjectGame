@@ -10,6 +10,9 @@ public class LoadingScreen extends Screen {
 		super(game);
 	}
 	
+	/* loads all the images and audio files required by the game into the Assets
+	 * loads Settings from the save file
+	   then sent the screen to the Main Main Screen*/
 	public void update(float deltaTime) {
 		Graphics g = game.getGraphics();
 		Assets.background = g.newPixmap("background.png", PixmapFormat.RGB565);

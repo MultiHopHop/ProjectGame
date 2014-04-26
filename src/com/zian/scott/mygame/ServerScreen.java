@@ -17,28 +17,30 @@ import com.zian.scott.framework.Input.TouchEvent;
 
 public class ServerScreen extends Screen {
 	
-	ServerManagement sm;
-	static int numPlayers;
+	ServerManagement sm; //sm manages the socket connections
+	static int numPlayers; //number of players in the game
 
-	Thread serverThread = null;
+	Thread serverThread = null; //Thread to initiate server
 	
-	boolean connected = false;
-	boolean authenticated = false;
+	boolean connected = false; //check if client has been connected to server
+	boolean authenticated = false; //check if authentication passes or fails
 	
-	private int t;
+	private int t; //Authentication type number
 
 	public ServerScreen(Game game, Integer t) {
 		super(game);
 		this.t = t;
 		// default
 		numPlayers = 1;
-
+		
+		//Initiate server
 		this.serverThread = new Thread(new ServerThread());
 		this.serverThread.start();
 		Log.d("CreateServer", "CreateServerThread");
 
 	}
 
+	/*The update method processes the touch inputs of the user*/
 	@Override
 	public void update(float deltaTime) {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
@@ -52,9 +54,9 @@ public class ServerScreen extends Screen {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
+					// test back, close sm
 					game.setScreen(new MultiPlayerScreen(game));
 					sm.stop();
-					// test back, close sm
 					return;
 				}
 				
@@ -62,20 +64,21 @@ public class ServerScreen extends Screen {
 					if (Settings.soundEnabled) {
 						Assets.click.play(1);
 					}
-					sm.write("start");
+					sm.write("start"); //inform clients to start game
 					Log.d("ServerWrite", "gamestart");
-					sm.write(String.valueOf(numPlayers));
-					game.setScreen(new GameScreenServer(game, sm));
+					sm.write(String.valueOf(numPlayers)); //inform clients the number of players
+					game.setScreen(new GameScreenServer(game, sm)); //go to game screen
 
 				}
 			}
 		}
 	}
 
+	/* present draws the required graphics onto the game screen */
 	@Override
 	public void present(float deltaTime) {
 		Graphics g = game.getGraphics();
-		g.drawPixmap(Assets.background, 0, 0);
+		g.drawPixmap(Assets.background, 0, 0); // background image
 		g.drawPixmap(Assets.serverclient, g.getWidth()/2 -60, 0, 0, 0, 120, 48); // Server image
 		g.drawPixmap(Assets.serverclient, 0, 416, 0, 96, 120, 48); // Back button image
 		g.drawPixmap(Assets.serverclient, 200, 416, 0, 144, 120, 48); // Play button image
@@ -91,7 +94,7 @@ public class ServerScreen extends Screen {
 		}
 		
 		if(authenticated) 
-			g.drawPixmap(Assets.client, 0, 200, 0, 50, 160, 50); // Autenticated image
+			g.drawPixmap(Assets.client, 0, 200, 0, 50, 160, 50); // Authenticated image
 		
 		//T image
 		switch(t){
@@ -131,6 +134,8 @@ public class ServerScreen extends Screen {
 		
 	}
 	
+	/*returns true if the TouchEvent occurs within the speified box described by x,y,width and height
+	  else returns false*/
 	public boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
 		if (event.x > x && event.x < x + width - 1 &&
 				event.y > y && event.y < y + height - 1) {
@@ -141,6 +146,7 @@ public class ServerScreen extends Screen {
 		}
 	}
 	
+	/* getLocalIpAddress returns the Local Ip Address of this device if available */
 	public String getLocalIpAddress() {
 	    try {
 	    	for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
@@ -160,6 +166,7 @@ public class ServerScreen extends Screen {
 	    return null;
 	}
 	
+	/* drawText draws numbers which are represented in a String input to a specific x and y position*/
 	public void drawText(Graphics g, String line, int x, int y) {
         int len = line.length();
         for (int i = 0; i < len; i++) {
@@ -189,26 +196,27 @@ public class ServerScreen extends Screen {
 
 		public void run() {
 			
-			sm = new ServerManagement();
+			sm = new ServerManagement(); // creates an instance of ServerManagement
 			System.out.println("before connection");
 
-			boolean accepted = sm.accept();
+			boolean accepted = sm.accept(); // tries to accept a client
 			if(accepted) {
 				System.out.println("client accpeted");
-				connected = true;
+				connected = true; // client connected
 			} else {
 				Log.d("ServerAccept", "Fail to accept");
 			}
 			
 
-			if (!(authenticated = sm.initializeAuthenticate(t))) {
+			if (!(authenticated = sm.initializeAuthenticate(t))) { // initialize Authentication
+				//if Authentication fails
 //				sm.stop();
 				return;
 			}
 			
-			if (accepted) {
-				numPlayers++;
-				sm.singleWrite(String.valueOf(numPlayers - 1), numPlayers - 2);
+			if (accepted) { // if client was accepted
+				numPlayers++; //increase number of players
+				sm.singleWrite(String.valueOf(numPlayers - 1), numPlayers - 2); //inform players their number
 				Log.d("ServerAccept", "Send to " + (numPlayers - 2));
 			} else {
 				Log.d("ServerAccept", "Fail to accept");

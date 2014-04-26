@@ -12,11 +12,13 @@ public class MainMenuScreen extends Screen {
 		super(game);
 	}
 	
+	/*The update method processes the touch inputs of the user*/
 	public void update(float deltaTime) {
 		Graphics g = game.getGraphics();
-		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
+		List<TouchEvent> touchEvents = game.getInput().getTouchEvents(); //List of touch event
 		game.getInput().getKeyEvents();
 		
+		//for every touchevent in touchEvents assess it
 		int len = touchEvents.size();
 		for (int i=0; i<len; i++) {
 			TouchEvent event = touchEvents.get(i);
@@ -51,6 +53,8 @@ public class MainMenuScreen extends Screen {
 		}
 	}
 	
+	/*returns true if the TouchEvent occurs within the speified box described by x,y,width and height
+	  else returns false*/
 	public boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
 		if (event.x > x && event.x < x + width - 1 &&
 				event.y > y && event.y < y + height - 1) {
@@ -61,17 +65,18 @@ public class MainMenuScreen extends Screen {
 		}
 	}
 	
+	/* present draws the required graphics onto the game screen */
 	public void present(float deltaTime) {
-		Graphics g = game.getGraphics();
+		Graphics g = game.getGraphics(); // get game graphics for drawing
 		
-		g.drawPixmap(Assets.background, 0, 0);
-		g.drawPixmap(Assets.logo, 10, 20);
+		g.drawPixmap(Assets.background, 0, 0); // background image
+		g.drawPixmap(Assets.logo, 10, 20); // logo image
 		g.drawPixmap(Assets.mainMenu, 64, 220); //set of main menu buttons image
 		if (Settings.soundEnabled) {
-			g.drawPixmap(Assets.buttons, 0,  416, 0, 0, 64, 64);
+			g.drawPixmap(Assets.buttons, 0,  416, 0, 0, 64, 64); // sound enabled image
 		}
 		else {
-			g.drawPixmap(Assets.buttons, 0, 416, 64, 0, 64, 64);
+			g.drawPixmap(Assets.buttons, 0, 416, 64, 0, 64, 64); //sound disabled image
 		}
 	}
 	
